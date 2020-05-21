@@ -63,6 +63,7 @@
           </div>
         </div>
       </el-col>
+      <!--货物提单信息-->
       <el-col :xs="24" :sm="24" :lg="12">
         <div class="goods-wrapper background-fff">
           <div class="wrapper-title">货物提单信息</div>
@@ -193,6 +194,7 @@
         </div>
       </el-col>
     </el-row>
+    <!--出口商/制造商信息-->
     <el-row>
       <el-row :gutter="8">
         <el-col :xs="24" :sm="24" :lg="12">
@@ -230,6 +232,7 @@
                 </el-row>
               </div>
             </div>
+            <!--进口商信息-->
             <div class="wrapper-title">进口商信息</div>
             <div class="wrapper-form">
               <div>
@@ -265,39 +268,121 @@
             </div>
           </div>
         </el-col>
+        <!--右侧-->
         <el-col :xs="24" :sm="24" :lg="12">
           <div class="exit-wrapper background-fff">
             <div class="wrapper-form">
               <div>
                 <el-row :gutter="100">
                   <el-col :xs="24" :sm="24" :lg="12">
-                    <el-input :placeholder="$t('form.exporterName')" class="filter-item" />
+                    <el-input placeholder="请输入Final Invoice No" class="filter-item" />
                   </el-col>
                   <el-col :xs="24" :sm="24" :lg="12">
-                    <el-input :placeholder="$t('form.exporterAddress')" class="filter-item" />
+                    <el-date-picker
+                      v-model="selectDate"
+                      type="date"
+                      placeholder="请选择发票日期"
+                    />
+                  </el-col>
+                </el-row>
+              </div>
+              <div style="padding-top: 16px">
+                <el-row :gutter="100">
+                  <el-col :xs="24" :sm="24" :lg="12"><el-input placeholder="请输入FOB价格" class="filter-item" /></el-col>
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-select v-model="FOBcurrency" placeholder="请选择FOB币种">
+                      <el-option
+                        v-for="item in FOBcurrencyOptions"
+                        :key="item.FOBcurrencyValue"
+                        :label="item.FOBcurrencyLabel"
+                        :value="item.FOBcurrencyValue"
+                      />
+                    </el-select>
                   </el-col>
                 </el-row>
               </div>
               <div style="padding-top: 16px">
                 <el-row :gutter="100">
                   <el-col :xs="24" :sm="24" :lg="12">
-                    <el-input :placeholder="$t('form.exporterLink')" class="filter-item" />
+                    <el-input placeholder="请输入Form ‘M’号" class="filter-item" />
                   </el-col>
                   <el-col :xs="24" :sm="24" :lg="12">
-                    <el-input :placeholder="$t('form.exporterLinkNumber')" class="filter-item" />
+                    <el-input placeholder="请输入TIN NO." class="filter-item" />
                   </el-col>
                 </el-row>
               </div>
               <div style="padding-top: 16px">
                 <el-row :gutter="100">
-                  <el-col :xs="24" :sm="24" :lg="12"><el-input :placeholder="$t('form.exporterFax')" class="filter-item" /></el-col>
-                  <el-col :xs="24" :sm="24" :lg="12"><el-input :placeholder="$t('form.exporterEmail')" class="filter-item" /></el-col>
+                  <el-col :xs="24" :sm="24" :lg="12"><el-input placeholder="请输入BA NO." class="filter-item" /></el-col>
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-select v-model="routeList" placeholder="请选择PC ROUTE">
+                      <el-option
+                        v-for="item in routeOptions"
+                        :key="item.routeValue"
+                        :label="item.routeLabel"
+                        :value="item.routeValue"
+                      />
+                    </el-select>
+                  </el-col>
+                </el-row>
+              </div>
+              <div style="padding-top: 16px">
+                <el-row :gutter="100">
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-input placeholder="请输入RC/BN No" class="filter-item" />
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-input placeholder="请输入CNAS机构代码" class="filter-item" />
+                  </el-col>
+                </el-row>
+              </div>
+              <div style="padding-top: 16px">
+                <el-row :gutter="100">
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-input placeholder="请输入信用证号" class="filter-item" />
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <div style="padding-top: 10px">
+                      附件：<span style="color: #1890ff">上传申请单附件</span>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
+              <div style="padding-top: 16px">
+                <el-row :gutter="2">
+                  <el-col :xs="24" :sm="24" :lg="4">
+                    <div class="grid-content bg-purple">所附文件：</div>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="20">
+                    <div class="grid-content bg-purple">
+                      <el-checkbox-group v-model="fileList">
+                        <el-checkbox label="有效测试报告/证书" style="margin-bottom: 5px" />
+                        <el-checkbox label="ISO质量认证等体系复印件" style="margin-bottom: 5px" />
+                        <el-checkbox label="产品规格表，材质安全数据表" style="margin-bottom: 5px" />
+                        <el-checkbox label="ISO17025认证复印件" style="margin-bottom: 5px" />
+                        <el-checkbox label="供应商声明" style="margin-bottom: 5px" />
+                        <el-checkbox label="厂检/测试报告" style="margin-bottom: 5px" />
+                        <el-checkbox label="发票" style="margin-bottom: 5px" />
+                        <el-checkbox label="提单" style="margin-bottom: 5px" />
+                        <el-checkbox label="装箱单" style="margin-bottom: 5px" />
+                        <el-checkbox label="产品图片" style="margin-bottom: 5px" />
+                        <el-checkbox label="L/C" style="margin-bottom: 5px" />
+                        <el-checkbox label="PC" style="margin-bottom: 5px" />
+                        <el-checkbox label="其他" style="margin-bottom: 5px" />
+                      </el-checkbox-group>
+                    </div>
+                  </el-col>
                 </el-row>
               </div>
             </div>
           </div>
         </el-col>
       </el-row>
+    </el-row>
+    <el-row>
+      <div class="goods-wrapper background-fff">
+        <div class="wrapper-title">申请续表</div>
+      </div>
     </el-row>
   </div>
 </template>
@@ -312,6 +397,7 @@ export default {
       contactsInput: '',
       contactNumberInput: '',
       checkList: [],
+      fileList: [],
       checkExpectedList: [],
       productStatusList: [],
       selectDate: '',
@@ -384,6 +470,40 @@ export default {
         carrierLabel: 'E'
       }],
       carrier: '',
+      FOBcurrencyOptions: [{
+        FOBcurrencyValue: '选项1',
+        FOBcurrencyLabel: 'REM'
+      }, {
+        FOBcurrencyValue: '选项2',
+        FOBcurrencyLabel: 'USB'
+      }, {
+        FOBcurrencyValue: '选项3',
+        FOBcurrencyLabel: 'USB'
+      }, {
+        FOBcurrencyValue: '选项4',
+        FOBcurrencyLabel: 'REM'
+      }, {
+        FOBcurrencyValue: '选项5',
+        FOBcurrencyLabel: 'USB'
+      }],
+      FOBcurrency: '',
+      routeOptions: [{
+        routeValue: '选项1',
+        routeLabel: 'REM'
+      }, {
+        routeValue: '选项2',
+        routeLabel: 'USB'
+      }, {
+        routeValue: '选项3',
+        routeLabel: 'USB'
+      }, {
+        routeValue: '选项4',
+        routeLabel: 'REM'
+      }, {
+        routeValue: '选项5',
+        routeLabel: 'USB'
+      }],
+      routeList: '',
       method: '1'
     }
   },
