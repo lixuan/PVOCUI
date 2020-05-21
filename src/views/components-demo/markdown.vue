@@ -234,4 +234,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   .el-table thead{color: #1890ff}
+  .el-range-editor.el-input__inner {
+    vertical-align: top;
+  }
 </style>
