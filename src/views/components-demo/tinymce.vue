@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <div class="app-container">
     <div class="filter-container">
@@ -86,7 +87,7 @@
       <el-table-column :label="$t('table.actions')" align="center" width="110" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button size="small" type="primary" @click="handleUpdate(row)">
-            修改
+            编辑
           </el-button>
         </template>
       </el-table-column>
