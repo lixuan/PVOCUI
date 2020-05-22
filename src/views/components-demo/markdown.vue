@@ -10,6 +10,7 @@
       <el-select v-model="listQuery.importance" placeholder="出征地点" clearable style="width: 130px" class="filter-item">
         <el-option v-for="item in expeditionOptions" :key="item" :label="item" :value="item" />
       </el-select>
+      <span style="color: #606266;">签发时间：</span>
       <el-date-picker
         v-model="issueValue"
         type="daterange"
