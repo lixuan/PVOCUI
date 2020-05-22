@@ -279,7 +279,7 @@
                   </el-col>
                   <el-col :xs="24" :sm="24" :lg="12">
                     <el-date-picker
-                      v-model="selectDate"
+                      v-model="selectDateFp"
                       type="date"
                       placeholder="请选择发票日期"
                     />
@@ -563,13 +563,14 @@ export default {
       },
       contactsInput: '',
       contactNumberInput: '',
-      checkList: [],
-      fileList: [],
-      checkExpectedList: [],
-      productStatusList: [],
+      checkList: [], // 所申请证书类型
+      fileList: [], // 所附文件
+      checkExpectedList: [], // 出运方式
+      productStatusList: [], // 产品状况
       selectDate: '',
+      selectDateFp: '',
       expectedShipmentDate: '',
-      countryValueOptions: [{
+      countryValueOptions: [{ // 请选择原产国
         countryValue: '选项1',
         countryLabel: '中国'
       }, {
@@ -586,7 +587,7 @@ export default {
         countryLabel: '俄罗斯'
       }],
       country: '',
-      exportingCountryValueOptions: [{
+      exportingCountryValueOptions: [{ // 请选择出口国
         exportingCountryValue: '选项1',
         exportingCountryLabel: '中国'
       }, {
@@ -603,7 +604,7 @@ export default {
         exportingCountryLabel: '俄罗斯'
       }],
       exportingCountry: '',
-      importingCountryValueOptions: [{
+      importingCountryValueOptions: [{ // 前选择进口国
         importingCountryValue: '选项1',
         importingCountryLabel: '中国'
       }, {
@@ -620,7 +621,7 @@ export default {
         importingCountryLabel: '俄罗斯'
       }],
       importingCountry: '',
-      carrierOptions: [{
+      carrierOptions: [{ // 承运人
         carrierValue: '选项1',
         carrierLabel: 'A'
       }, {
@@ -637,7 +638,7 @@ export default {
         carrierLabel: 'E'
       }],
       carrier: '',
-      FOBcurrencyOptions: [{
+      FOBcurrencyOptions: [{ // 请选择FOB币种
         FOBcurrencyValue: '选项1',
         FOBcurrencyLabel: 'REM'
       }, {
@@ -654,7 +655,7 @@ export default {
         FOBcurrencyLabel: 'USB'
       }],
       FOBcurrency: '',
-      routeOptions: [{
+      routeOptions: [{ // 请选择PC ROUTE
         routeValue: '选项1',
         routeLabel: 'REM'
       }, {
