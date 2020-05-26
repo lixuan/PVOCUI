@@ -3,12 +3,12 @@
 import Layout from '@/layout'
 
 const tableRouter = {
-  path: '/table',
+  path: '/data-maintenance',
   component: Layout,
   redirect: '/table/complex-table',
   name: 'Table',
   meta: {
-    title: 'Table',
+    title: 'DataMaintenance',
     icon: 'table'
   },
   children: [
@@ -39,6 +39,13 @@ const tableRouter = {
       component: () => import('@/views/table/complex-table'),
       name: 'ComplexTable',
       meta: { title: 'complexTable' }
+    },
+    // 复核详情
+    {
+      path: 'to-review',
+      component: () => import('@/views/table/to-review'),
+      name: 'toReview',
+      meta: { title: 'toReview' }
     }
   ]
 }

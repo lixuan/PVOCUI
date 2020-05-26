@@ -3,12 +3,12 @@
 import Layout from '@/layout'
 
 const componentsRouter = {
-  path: '/components',
+  path: '/certificate',
   component: Layout,
   redirect: 'noRedirect',
   name: 'ComponentDemo',
   meta: {
-    title: 'components',
+    title: 'Certificate',
     icon: 'component'
   },
   children: [
@@ -25,6 +25,27 @@ const componentsRouter = {
       component: () => import('@/views/components-demo/markdown'),
       name: 'MarkdownDemo',
       meta: { title: 'markdown' }
+    },
+    // 签发详情
+    {
+      path: 'issued',
+      component: () => import('@/views/components-demo/issued'),
+      name: 'DetailsIssued',
+      meta: { title: 'DetailsIssued' }
+    },
+    // 证书详情
+    {
+      path: 'certificate-details',
+      component: () => import('@/views/components-demo/certificate-details'),
+      name: 'CertificateDetails',
+      meta: { title: 'CertificateDetails' }
+    },
+    // 任务分配
+    {
+      path: 'task-allocation',
+      component: () => import('@/views/components-demo/task-allocation'),
+      name: 'TaskAllocation',
+      meta: { title: 'TaskAllocation' }
     },
     // 证书邮寄
     {

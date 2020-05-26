@@ -52,13 +52,13 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/Home',
     children: [
       {
-        path: 'dashboard',
+        path: 'Home',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'Home', icon: 'dashboard', affix: true }
       }
     ]
   },
@@ -86,44 +86,89 @@ export const constantRoutes = [
 export const asyncRoutes = [
   // 委托管理
   {
-    path: '/permission',
+    path: '/Entrust',
     component: Layout,
     redirect: '/permission/page',
     alwaysShow: true, // 始终显示根菜单
     name: 'Permission',
     meta: {
-      title: 'permission',
+      title: 'Entrust',
       icon: 'lock',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       // 任务查询
       {
-        path: 'role',
+        path: 'TaskQuery',
         component: () => import('@/views/permission/role'),
         name: 'RolePermission',
         meta: {
-          title: 'rolePermission',
+          title: 'TaskQuery',
           roles: ['admin']
         }
       },
       // 业务登记
       {
-        path: 'page',
+        path: 'BusinessRegistration',
         component: () => import('@/views/permission/page'),
         name: 'PagePermission',
         meta: {
-          title: 'pagePermission',
+          title: 'BusinessRegistration',
           roles: ['admin']
         }
       },
       // 未通过申请
       {
-        path: 'directive',
+        path: 'Fail',
         component: () => import('@/views/permission/directive'),
         name: 'DirectivePermission',
         meta: {
-          title: 'directivePermission'
+          title: 'Fail'
+        }
+      },
+      // 工作记录
+      {
+        path: 'work-records',
+        component: () => import('@/views/permission/work'),
+        name: 'WorkPermission',
+        meta: {
+          title: 'WorkRecords'
+        }
+      },
+      // 委托详情
+      {
+        path: 'entrus-tment',
+        component: () => import('@/views/permission/entrustment'),
+        name: 'DetailsEntrustment',
+        meta: {
+          title: 'Entrustment'
+        }
+      },
+      // 数据复核
+      {
+        path: 'data-eview',
+        component: () => import('@/views/permission/data-eview'),
+        name: 'DataReview',
+        meta: {
+          title: 'DataReview'
+        }
+      },
+      // 核验下发详情
+      {
+        path: 'check-details',
+        component: () => import('@/views/permission/check-details'),
+        name: 'CheckDetails',
+        meta: {
+          title: 'CheckDetails'
+        }
+      },
+      // 任务接收
+      {
+        path: 'task-acceptance',
+        component: () => import('@/views/permission/task-acceptance'),
+        name: 'TaskAcceptance',
+        meta: {
+          title: 'TaskAcceptance'
         }
       }
     ]
@@ -139,14 +184,14 @@ export const asyncRoutes = [
 
   // 系统设置
   {
-    path: '/tab',
+    path: '/settings',
     component: Layout,
     children: [
       {
         path: 'index',
         component: () => import('@/views/tab/index'),
         name: 'Tab',
-        meta: { title: 'tab', icon: 'tab' }
+        meta: { title: 'Settings', icon: 'tab' }
       }
     ]
   },
