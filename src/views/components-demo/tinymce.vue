@@ -33,7 +33,9 @@
       highlight-current-row
       style="width: 100%;"
       @sort-change="sortChange"
+      @selection-change="handleSelectionChange"
     >
+      <el-table-column type="selection" width="55" align="center" />
       <el-table-column :label="$t('table.id')" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
@@ -201,7 +203,8 @@ export default {
         title: [{ required: true, message: 'title is required', trigger: 'blur' }],
         name: [{ required: true, message: 'name is required', trigger: 'blur' }]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      multipleSelection: []
     }
   },
   created() {
@@ -329,6 +332,19 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    // toggleSelection(rows) {
+    //   if (rows) {
+    //     rows.forEach(row => {
+    //       this.$refs.multipleTable.toggleRowSelection(row);
+    //     });
+    //   } else {
+    //     this.$refs.multipleTable.clearSelection();
+    //   }
+    // },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      // console.log(val)
     }
   }
 }
