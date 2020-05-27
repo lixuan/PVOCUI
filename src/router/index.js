@@ -52,10 +52,10 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/Home',
+    redirect: '/home',
     children: [
       {
-        path: 'Home',
+        path: 'home',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
         meta: { title: 'Home', icon: 'dashboard', affix: true }
@@ -170,6 +170,13 @@ export const asyncRoutes = [
         meta: {
           title: 'TaskAcceptance'
         }
+      },
+      // 客户查询
+      {
+        path: 'customer-query',
+        component: () => import('@/views/permission/customer-query'),
+        name: 'customerQuery',
+        meta: { title: 'customerQuery' }
       }
     ]
   },

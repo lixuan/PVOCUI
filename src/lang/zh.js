@@ -10,6 +10,7 @@ export default {
     DataReview: '数据复核',
     CheckDetails: '核验下发详情',
     TaskAcceptance: '任务接收',
+    customerQuery: '客户查询',
     Certificate: '证书管理',
     tinymce: '证书复检生成',
     markdown: '证书签发',
