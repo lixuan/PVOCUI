@@ -86,7 +86,7 @@ export const constantRoutes = [
 export const asyncRoutes = [
   // 委托管理
   {
-    path: '/Entrust',
+    path: '/entrust',
     component: Layout,
     redirect: '/permission/page',
     alwaysShow: true, // 始终显示根菜单
@@ -99,7 +99,7 @@ export const asyncRoutes = [
     children: [
       // 任务查询
       {
-        path: 'TaskQuery',
+        path: 'taskquery',
         component: () => import('@/views/permission/role'),
         name: 'RolePermission',
         meta: {
@@ -109,7 +109,7 @@ export const asyncRoutes = [
       },
       // 业务登记
       {
-        path: 'BusinessRegistration',
+        path: 'business-registration',
         component: () => import('@/views/permission/page'),
         name: 'PagePermission',
         meta: {
@@ -119,7 +119,7 @@ export const asyncRoutes = [
       },
       // 未通过申请
       {
-        path: 'Fail',
+        path: 'fail',
         component: () => import('@/views/permission/directive'),
         name: 'DirectivePermission',
         meta: {

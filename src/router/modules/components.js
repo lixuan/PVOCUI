@@ -14,21 +14,21 @@ const componentsRouter = {
   children: [
     // 证书复检生成
     {
-      path: 'tinymce',
+      path: 'certificate-recheck',
       component: () => import('@/views/components-demo/tinymce'),
       name: 'TinymceDemo',
       meta: { title: 'tinymce' }
     },
     // 证书签发
     {
-      path: 'markdown',
+      path: 'certificate-issued',
       component: () => import('@/views/components-demo/markdown'),
       name: 'MarkdownDemo',
       meta: { title: 'markdown' }
     },
     // 签发详情
     {
-      path: 'issued',
+      path: 'issued-details',
       component: () => import('@/views/components-demo/issued'),
       name: 'DetailsIssued',
       meta: { title: 'DetailsIssued' }
@@ -49,7 +49,7 @@ const componentsRouter = {
     },
     // 证书邮寄
     {
-      path: 'json-editor',
+      path: 'certificate-mailing',
       component: () => import('@/views/components-demo/json-editor'),
       name: 'JsonEditorDemo',
       meta: { title: 'jsonEditor' }

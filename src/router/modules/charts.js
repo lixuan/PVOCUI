@@ -3,7 +3,7 @@
 import Layout from '@/layout'
 
 const chartsRouter = {
-  path: '/financial ',
+  path: '/finance',
   component: Layout,
   redirect: 'noRedirect',
   name: 'Charts',
@@ -14,14 +14,14 @@ const chartsRouter = {
   children: [
     // 检验计费
     {
-      path: 'keyboard',
+      path: 'billing',
       component: () => import('@/views/charts/keyboard'),
       name: 'KeyboardChart',
       meta: { title: 'keyboardChart', noCache: true }
     },
     // 费用结算
     {
-      path: 'line',
+      path: 'expense-settlement',
       component: () => import('@/views/charts/line'),
       name: 'LineChart',
       meta: { title: 'lineChart', noCache: true }
