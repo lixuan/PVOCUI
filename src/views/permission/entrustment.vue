@@ -52,10 +52,10 @@
             <div style="padding: 20px 0 20px 20px" class="check-style">
               <el-checkbox-group v-model="checkList">
                 <p><el-checkbox label="VISUAL QUALIT" name="type" /></p>
-                <p><el-checkbox label="QUANTITY/WEIGHT" name="type" /></p>
-                <p><el-checkbox label="MODEL" name="type" /></p>
-                <p><el-checkbox label="SPECIFICATION/DIMENSION" name="type" /></p>
-                <p><el-checkbox label="SERIAL,No" name="type" /></p>
+                <p><el-checkbox label="QUANTITY/WEIGHT" name="" /></p>
+                <p><el-checkbox label="MODEL" name="" /></p>
+                <p><el-checkbox label="SPECIFICATION/DIMENSION" name="" /></p>
+                <p><el-checkbox label="SERIAL,No" name="" /></p>
                 <p><el-checkbox label="MANFACTURER AND/OR BRAND" name="type" /></p>
                 <p><el-checkbox label="COUNTRY OF ORIGIN" name="type" /></p>
                 <p><el-checkbox label="PACKING" name="type" /></p>
@@ -78,7 +78,7 @@
           <div class="background-fff">
             <div class="wrapper-title">检验依据</div>
             <div style="padding: 20px 0 20px 20px" class="check-style">
-              <el-checkbox-group v-model="checkList">
+              <el-checkbox-group v-model="checkList2">
                 <p><el-checkbox label="有效测试报告/证书" name="type" /></p>
                 <p><el-checkbox label="ISO质量认证等体系复印件" name="type" /></p>
                 <p><el-checkbox label="产品规格表，材质安全数据表" name="type" /></p>
@@ -126,7 +126,8 @@ export default {
         desc: '',
         examineValue: ''
       },
-      checkList: ''
+      checkList: [],
+      checkList2: []
     }
   },
   created() {

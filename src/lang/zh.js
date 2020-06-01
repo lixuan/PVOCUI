@@ -2,13 +2,12 @@ export default {
   route: {
     Home: '系统主页',
     Entrust: '委托管理',
-    TaskQuery: '任务查询',
+    TaskQuery: '核验下发',
     BusinessRegistration: '业务登记',
     Fail: '未通过申请',
     WorkRecords: '工作记录',
     Entrustment: '委托详情',
     DataReview: '数据复核',
-    CheckDetails: '核验下发详情',
     TaskAcceptance: '任务接收',
     customerQuery: '客户查询',
     Certificate: '证书管理',
@@ -39,7 +38,7 @@ export default {
     size: '布局大小'
   },
   login: {
-    title: '系统登录',
+    title: '中地汉盛进检验认证系统',
     logIn: '登录',
     username: '账号',
     password: '密码',
@@ -108,7 +107,7 @@ export default {
     contactNumber: '联系电话',
     fax: '传真',
     remarks: '备注',
-    checkAndIssue: '核验签发',
+    checkAndIssue: '查看详情',
     certificate: '证书号',
     drafter: '拟稿人',
     draftTime: '拟稿时间',

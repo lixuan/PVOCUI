@@ -71,7 +71,6 @@ export default {
   directives: { waves },
   data() {
     return {
-      checkList: [], // 出运方式
       SealValue: '', // 封识号码
       examineOptions: [{
         value: '选项1',

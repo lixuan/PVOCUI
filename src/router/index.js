@@ -153,15 +153,6 @@ export const asyncRoutes = [
           title: 'DataReview'
         }
       },
-      // 核验下发详情
-      {
-        path: 'check-details',
-        component: () => import('@/views/permission/check-details'),
-        name: 'CheckDetails',
-        meta: {
-          title: 'CheckDetails'
-        }
-      },
       // 任务接收
       {
         path: 'task-acceptance',

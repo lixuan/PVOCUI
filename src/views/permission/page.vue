@@ -664,7 +664,7 @@ export default {
         FOBcurrencyLabel: 'USB'
       }],
       FOBcurrency: '',
-      routeOptions: [{ // 请选择PC ROUTE
+      routeOptions: [{
         routeValue: '选项1',
         routeLabel: 'REM'
       }, {
@@ -723,8 +723,6 @@ export default {
       fetchList(this.listQuery).then(response => {
         this.list = response.data.items
         this.total = response.data.total
-
-        // Just to simulate the time of the request
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
