@@ -6,7 +6,6 @@
         <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
       </el-select>
       <el-input v-model="listQuery.name" placeholder="客户名称" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.testAddress" placeholder="检验地点" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-date-picker
         v-model="listQuery.testDate"
         style="width: 150px;"
@@ -120,8 +119,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="handlePublish(row)">
-            详情
+          <el-button size="small" type="primary" @click="handlePublish(row)">
+            工作记录
           </el-button>
         </template>
       </el-table-column>
@@ -142,8 +141,141 @@
         @current-change="handleCurrentChange"
       />
     </div>
-    <el-dialog title="查看详情" :visible.sync="dialogPublishVisible">
-      内容
+    <el-dialog title="工作记录" :visible.sync="dialogPublishVisible">
+      <el-row>
+        <el-col :xs="24" :sm="24" :lg="24">
+          <div class="background-fff">
+            <div class="wrapper-title">基本信息</div>
+            <div style="padding: 20px 0 20px 20px">
+              <el-form ref="ruleForm" :model="ruleForm" label-width="90px" class="demo-ruleForm">
+                <el-row :xs="24" :sm="24" :lg="24">
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="编号：" prop="name">
+                      KER100049001
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="指令编号：" prop="type">
+                      KEC1041650
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="检验公司：" prop="number">
+                      中地汉盛检验认证
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="检验员：" prop="delivery">
+                      员工甲
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :xs="24" :sm="24" :lg="24">
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="检验时间：" prop="">
+                      2020-03-27
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="检验地点：" prop="">
+                      山东省青岛市黄岛区前港湾路三期码头
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="8">
+                    <el-form-item label="出运方式：" prop="">
+                      <el-checkbox-group v-model="checkList">
+                        <el-checkbox label="整箱" style="margin-bottom: 5px" />
+                        <el-checkbox label="拼箱" />
+                        <el-checkbox label="散货" />
+                        <el-checkbox label="未指定" />
+                      </el-checkbox-group>
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :xs="24" :sm="24" :lg="24">
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-form-item label="封识号码：" prop="">
+                      <el-input v-model="ruleForm.SealValue" placeholder="请输入封识号码" class="filter-item" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+              </el-form>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col :xs="24" :sm="24" :lg="24">
+          <div class="background-fff">
+            <div class="wrapper-title">封识信息</div>
+            <div v-for="(item , i) in lists" :key="i" style="padding: 20px 0 20px 20px">
+              <el-form v-for="(val,key) in item" :key="key" :model="ruleForm" label-width="100px" class="demo-ruleForm">
+                <el-row :xs="24" :sm="24" :lg="24" :gutter="10">
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-form-item label="集装箱编号：" prop="name">
+                      <el-input v-model="val.number" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-form-item label="集装箱类型：" prop="type">
+                      <el-input v-model="val.type" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :xs="24" :sm="24" :lg="24" :gutter="10">
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-form-item label="封识编号：" prop="number">
+                      <el-input v-model="val.no" />
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-form-item label="商品类别：" prop="delivery">
+                      <el-input v-model="val.category" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-row :xs="24" :sm="24" :lg="24">
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="上传人：" prop="">
+                      员工甲
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="6">
+                    <el-form-item label="上传时间：" prop="">
+                      2020-3-28
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="8">
+                    <el-form-item label="检验完成时间：" prop="" label-width="130px">
+                      2020-3-28
+                    </el-form-item>
+                  </el-col>
+                  <el-col :xs="24" :sm="24" :lg="4" />
+                </el-row>
+                <el-row :xs="24" :sm="24" :lg="24">
+                  <el-form-item label="附件：" prop="">
+                    <span style="color: #1890ff">附件文件</span>
+                  </el-form-item>
+                </el-row>
+                <el-row :gutter="8">
+                  <el-col :xs="24" :sm="24" :lg="12">
+                    <el-form-item label="说明：" prop="">
+                      <el-input v-model="val.desc" type="textarea" />
+                    </el-form-item>
+                  </el-col>
+                </el-row>
+                <el-col :xs="24" :sm="24" :lg="12">
+                  <el-button size="small" type="primary" @click="add">添加</el-button>
+                </el-col>
+              </el-form>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="innerVisible = false">取 消</el-button>
+        <el-button type="primary" @click="innerVisible = false">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -151,11 +283,15 @@
 <script>
 import waves from '@/directive/waves'
 
+const baseInfo = [
+  { number: '', no: '', category: '', desc: '', type: null }
+]
 export default {
-  name: 'InspectionQuery',
+  name: 'WorkPermission',
   directives: { waves },
   data() {
     return {
+      lists: [baseInfo],
       tableKey: '0',
       // listLoading: true,  // 加载中
       list: [
@@ -530,6 +666,24 @@ export default {
         state: 1,
         remarks: ''
       },
+      checkList: [], // 出运方式
+      SealValue: '', // 封识号码
+      examineOptions: [{
+        value: '选项1',
+        label: '审核通过'
+      }, {
+        value: '选项2',
+        label: '审核未通过'
+      }],
+      ruleForm: {
+        name: '',
+        number: '',
+        type: '',
+        delivery: false,
+        SealValue: '',
+        desc: '',
+        examineValue: ''
+      },
       multipleSelection: [] // 表格选中的行
     }
   },
@@ -550,6 +704,9 @@ export default {
     //     }, 1.5 * 1000)
     //   })
     // },
+    add() {
+      this.lists.push(baseInfo)
+    },
     /**
      * 点击了搜索
      */
@@ -593,4 +750,6 @@ export default {
   .filter-container .filter-item{
     margin-bottom: 0;
   }
+  .wrapper-title{color: #1890ff}
+  .pad-15{padding-bottom: 15px}
 </style>

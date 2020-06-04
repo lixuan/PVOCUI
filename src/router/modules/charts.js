@@ -19,14 +19,7 @@ const chartsRouter = {
       name: 'KeyboardChart',
       meta: { title: 'keyboardChart', noCache: true }
     },
-    // 费用结算
-    {
-      path: 'expense-settlement',
-      component: () => import('@/views/charts/line'),
-      name: 'LineChart',
-      meta: { title: 'lineChart', noCache: true }
-    },
-    // 计费详情
+    // 计费核算
     {
       path: 'billing-details',
       component: () => import('@/views/charts/billing-details'),

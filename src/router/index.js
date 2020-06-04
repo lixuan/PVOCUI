@@ -84,7 +84,7 @@ export const constantRoutes = [
  * 需要根据用户角色动态加载的路由
  */
 export const asyncRoutes = [
-  // 委托管理
+  // 业务
   {
     path: '/entrust',
     component: Layout,
@@ -97,17 +97,7 @@ export const asyncRoutes = [
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
-      // 任务查询
-      {
-        path: 'taskquery',
-        component: () => import('@/views/permission/role'),
-        name: 'RolePermission',
-        meta: {
-          title: 'TaskQuery',
-          roles: ['admin']
-        }
-      },
-      // 业务登记
+      // 业务录入
       {
         path: 'business-registration',
         component: () => import('@/views/permission/page'),
@@ -117,34 +107,17 @@ export const asyncRoutes = [
           roles: ['admin']
         }
       },
-      // 未通过申请
+      // 核验下发
       {
-        path: 'fail',
-        component: () => import('@/views/permission/directive'),
-        name: 'DirectivePermission',
+        path: 'taskquery',
+        component: () => import('@/views/permission/role'),
+        name: 'RolePermission',
         meta: {
-          title: 'Fail'
+          title: 'TaskQuery',
+          roles: ['admin']
         }
       },
-      // 工作记录
-      {
-        path: 'work-records',
-        component: () => import('@/views/permission/work'),
-        name: 'WorkPermission',
-        meta: {
-          title: 'WorkRecords'
-        }
-      },
-      // 委托详情
-      {
-        path: 'entrus-tment',
-        component: () => import('@/views/permission/entrustment'),
-        name: 'DetailsEntrustment',
-        meta: {
-          title: 'Entrustment'
-        }
-      },
-      // 数据复核
+      // 检验复核
       {
         path: 'data-eview',
         component: () => import('@/views/permission/data-eview'),
@@ -153,46 +126,84 @@ export const asyncRoutes = [
           title: 'DataReview'
         }
       },
-      // 任务接收
+      // 检验查询
       {
-        path: 'task-acceptance',
-        component: () => import('@/views/permission/task-acceptance'),
-        name: 'TaskAcceptance',
+        path: 'inspection-query',
+        component: () => import('@/views/permission/directive'),
+        name: 'InspectionQuery',
         meta: {
-          title: 'TaskAcceptance'
+          title: 'InspectionQuery'
+        }
+      }
+    ]
+  },
+  // 质检
+  {
+    path: '/quality-testing',
+    component: Layout,
+    redirect: '/quality-testing/page',
+    alwaysShow: true, // 始终显示根菜单
+    name: 'qualityTesting',
+    meta: {
+      title: 'qualityTesting',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
+    children: [
+      // 检验计划
+      {
+        path: 'task-allocation',
+        component: () => import('@/views/quality-testing/task-allocation'),
+        name: 'TaskAllocation',
+        meta: { title: 'TaskAllocation' }
+      },
+      // 检验鉴定
+      {
+        path: 'work-records',
+        component: () => import('@/views/quality-testing/work'),
+        name: 'WorkPermission',
+        meta: {
+          title: 'WorkRecords'
         }
       },
-      // 客户查询
+      // 鉴定历史
       {
         path: 'customer-query',
-        component: () => import('@/views/permission/customer-query'),
+        component: () => import('@/views/quality-testing/customer-query'),
         name: 'customerQuery',
         meta: { title: 'customerQuery' }
       }
     ]
   },
-
   /** 切分路由模块 **/
   // 证书管理
   componentsRouter,
   // 财务计费
   chartsRouter,
-  // 数据维护
-  tableRouter,
 
-  // 系统设置
+  // 客户查询
   {
-    path: '/settings',
+    path: '/customer',
     component: Layout,
+    redirect: '/customer/page',
+    alwaysShow: true, // 始终显示根菜单
+    name: 'customerTesting',
+    meta: {
+      title: 'customerTesting',
+      icon: 'lock',
+      roles: ['admin', 'editor'] // you can set roles in root nav
+    },
     children: [
       {
-        path: 'index',
+        path: 'customer-history',
         component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'Settings', icon: 'tab' }
+        name: 'customerHistory',
+        meta: { title: 'customerHistory', icon: 'tab' }
       }
     ]
   },
+  // 数据维护
+  tableRouter,
 
   // 404页必须放在页尾
   { path: '*', redirect: '/404', hidden: true }

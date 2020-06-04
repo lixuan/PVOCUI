@@ -1,13 +1,13 @@
 <template>
   <div class="components-container">
-    系统设置
+    客户查询
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'Tab',
+  name: 'CustomerHistory',
   components: {},
   data() {
     return {}

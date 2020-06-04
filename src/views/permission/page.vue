@@ -456,10 +456,10 @@
               <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
                 <template slot-scope="{row,$index}">
                   <el-button type="primary" size="mini" @click="handleUpdate(row)">
-                    {{ $t('table.edit') }}
+                    编辑
                   </el-button>
-                  <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
-                    {{ $t('table.delete') }}
+                  <el-button size="mini" type="danger" @click="handleDelete(row,$index)">
+                    删除
                   </el-button>
                 </template>
               </el-table-column>

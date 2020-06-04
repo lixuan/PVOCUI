@@ -12,7 +12,7 @@ const componentsRouter = {
     icon: 'component'
   },
   children: [
-    // 证书复检生成
+    // 证书生成
     {
       path: 'certificate-recheck',
       component: () => import('@/views/components-demo/tinymce'),
@@ -26,27 +26,6 @@ const componentsRouter = {
       name: 'MarkdownDemo',
       meta: { title: 'markdown' }
     },
-    // 签发详情
-    {
-      path: 'issued-details',
-      component: () => import('@/views/components-demo/issued'),
-      name: 'DetailsIssued',
-      meta: { title: 'DetailsIssued' }
-    },
-    // 证书详情
-    {
-      path: 'certificate-details',
-      component: () => import('@/views/components-demo/certificate-details'),
-      name: 'CertificateDetails',
-      meta: { title: 'CertificateDetails' }
-    },
-    // 任务分配
-    {
-      path: 'task-allocation',
-      component: () => import('@/views/components-demo/task-allocation'),
-      name: 'TaskAllocation',
-      meta: { title: 'TaskAllocation' }
-    },
     // 证书邮寄
     {
       path: 'certificate-mailing',
@@ -54,6 +33,20 @@ const componentsRouter = {
       name: 'JsonEditorDemo',
       meta: { title: 'jsonEditor' }
     }
+    // // 签发详情
+    // {
+    //   path: 'issued-details',
+    //   component: () => import('@/views/components-demo/issued'),
+    //   name: 'DetailsIssued',
+    //   meta: { title: 'DetailsIssued' }
+    // },
+    // // 证书详情
+    // {
+    //   path: 'certificate-details',
+    //   component: () => import('@/views/components-demo/certificate-details'),
+    //   name: 'CertificateDetails',
+    //   meta: { title: 'CertificateDetails' }
+    // }
   ]
 }
 

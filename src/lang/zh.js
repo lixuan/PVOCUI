@@ -1,33 +1,39 @@
 export default {
   route: {
     Home: '系统主页',
-    Entrust: '委托管理',
+    Entrust: '业务',
+    BusinessRegistration: '业务录入',
     TaskQuery: '核验下发',
-    BusinessRegistration: '业务登记',
-    Fail: '未通过申请',
-    WorkRecords: '工作记录',
-    Entrustment: '委托详情',
-    DataReview: '数据复核',
-    TaskAcceptance: '任务接收',
-    customerQuery: '客户查询',
+    DataReview: '检验复核',
+    InspectionQuery: '检验查询',
+
+    qualityTesting: '质检',
+    TaskAllocation: '检验计划',
+    WorkRecords: '检验鉴定',
+    customerQuery: '鉴定历史',
+
     Certificate: '证书管理',
-    tinymce: '证书复检生成',
+    tinymce: '证书生成',
     markdown: '证书签发',
-    DetailsIssued: '签发详情',
-    CertificateDetails: '证书详情',
-    TaskAllocation: '任务分配',
     jsonEditor: '证书邮寄',
-    Financial: '财务计费',
+
+    Financial: '财务',
     keyboardChart: '检验计费',
-    lineChart: '费用结算',
-    BillingDetails: '计费详情',
-    DataMaintenance: '数据维护',
+    BillingDetails: '计费核算',
+
+    customerTesting: '客户查询',
+    customerHistory: '申请查询',
+
+    DataMaintenance: '基础数据',
     dynamicTable: '审核标准',
     dragTable: '进出口商信息',
     inlineEditTable: '计费标准',
     complexTable: '汇率维护',
     toReview: '复核详情',
-    Settings: '系统设置'
+    DetailsIssued: '签发详情',
+    Entrustment: '委托详情',
+    TaskAcceptance: '任务接收',
+    CertificateDetails: '证书详情'
   },
   navbar: {
     dashboard: '首页',

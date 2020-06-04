@@ -152,7 +152,7 @@
 import waves from '@/directive/waves'
 
 export default {
-  name: 'InspectionQuery',
+  name: 'CustomerQuery',
   directives: { waves },
   data() {
     return {

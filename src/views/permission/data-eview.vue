@@ -1,257 +1,661 @@
-/* eslint-disable */
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" :placeholder="$t('table.commissionNo')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.importance" :placeholder="$t('table.state')" clearable style="width: 130px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+      <el-input v-model="listQuery.applicantNo" placeholder="申请号" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-select v-model="listQuery.type" placeholder="证书类型" clearable style="width: 150px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-input v-model="listQuery.name" :placeholder="$t('table.customerName')" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" placeholder="客户名称" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.testAddress" placeholder="检验地点" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-date-picker
+        v-model="listQuery.testDate"
+        style="width: 150px;"
+        type="date"
+        placeholder="检验日期"
+      />
+      <el-date-picker
+        v-model="listQuery.shipmentDate"
+        style="width: 150px;"
+        type="date"
+        placeholder="出运日期"
+      />
+      <el-date-picker
+        v-model="listQuery.applicantDate"
+        style="width: 150px;"
+        type="date"
+        placeholder="申请日期"
+      />
+      <el-select v-model="listQuery.state" placeholder="申请状态" clearable style="width: 130px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in stateOptions" :key="item" :label="item" :value="item" />
+      </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        {{ $t('table.search') }}
+        搜索
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-download">
-        导出Excel
+      <el-button v-waves class="filter-item" type="success" icon="el-icon-star-on" @click="examineClick">
+        审核
+      </el-button>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-info" @click="examineRecordClick">
+        审核记录
       </el-button>
     </div>
 
     <el-table
       :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
+      :data="list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
       border
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column :label="$t('table.id')" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column type="selection" align="center" />
+      <el-table-column label="序号" align="center" width="50px">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="委托号" align="center" class="link-type">
+      <el-table-column label="申请号" align="center" class="link-type">
         <template slot-scope="{row}">
-          <span>{{ row.pageviews }}</span>
+          <span>{{ row.applicantNo }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="封识号码" align="center">
+      <el-table-column label="证书类型" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.title }}</span>
+          <span>{{ row.type }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="IDF编号" align="center">
+      <el-table-column label="检验地点" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
+          <span>{{ row.testAddress }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" align="center">
+      <el-table-column label="检验日期" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.reviewer }}</span>
+          <span>{{ row.testDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上传人" align="center">
+      <el-table-column label="申请状态" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.reviewer }}</span>
+          <span>{{ row.state }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="上传时间" align="center">
+      <el-table-column label="出运日期" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.pageviews }}</span>
+          <span>{{ row.shipmentDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核人" class-name="status-col" align="center">
+      <el-table-column label="出运方式" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.pageviews }}</span>
+          <span>{{ row.shipment }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="审核时间" class-name="status-col" align="center">
+      <el-table-column label="承运人" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.pageviews }}</span>
+          <span>{{ row.carrier }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="复核人" class-name="status-col" align="center">
+      <el-table-column label="申请人" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.pageviews }}</span>
+          <span>{{ row.applican }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="复核时间" class-name="status-col" align="center">
+      <el-table-column label="申请日期" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.pageviews }}</span>
+          <span>{{ row.applicantDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column :label="$t('table.actions')" width="160px" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="客户名称" align="center">
         <template slot-scope="{row}">
-          <el-button size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            复核
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="联系人" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.contacts }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="联系电话" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.contactNumber }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="备注" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.remarks }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="160">
+        <template slot-scope="{row}">
+          <el-button size="mini" type="primary" @click="handlePublish(row)">
+            详情
           </el-button>
-          <el-button size="mini" type="primary" @click="handleUpdate(row)">
-            编辑
+          <el-button size="mini" type="success" @click="handleDetails(row)">
+            审核
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <div class="pagination">
+      <el-pagination
+        v-show="pagesize>0"
+        background
+        :current-page="currentPage"
+        :page-sizes="[10, 20, 30, 50]"
+        :page-size="pagesize"
+        layout="total, sizes,prev, pager, next"
+        :total="list.length"
+        prev-text="上一页"
+        next-text="下一页"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+    <el-dialog title="查看详情" :visible.sync="dialogPublishVisible">
+      内容
+    </el-dialog>
+    <el-dialog title="核验下发" :visible.sync="dialogDetailsVisible">
+      是否
+    </el-dialog>
+    <el-dialog title="审核记录" :visible.sync="dialogRecordsVisible">
+      <el-timeline>
+        <el-timeline-item
+          v-for="(activity, index) in activities"
+          :key="index"
+          :icon="activity.icon"
+          :type="activity.type"
+          :color="activity.color"
+          :size="activity.size"
+          :timestamp="activity.timestamp"
+        >
+          {{ activity.content }}
+        </el-timeline-item>
+      </el-timeline>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogRecordsVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
-import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
+import waves from '@/directive/waves'
 
 export default {
   name: 'DataReview',
-  components: { Pagination },
   directives: { waves },
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
-    }
-  },
   data() {
     return {
-      tableKey: 0,
-      list: null,
-      total: 0,
-      listLoading: true,
-      listQuery: {
+      tableKey: '0',
+      // listLoading: true,  // 加载中
+      list: [
+        {
+          'id': 1,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 2,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 3,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 4,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 5,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 6,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 7,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 8,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 9,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 10,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 11,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 12,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 13,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 14,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 15,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 16,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 17,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 18,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+        {
+          'id': 19,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        },
+
+        {
+          'id': 20,
+          'applicantNo': 'KEC1041651',
+          'type': 'PC1',
+          'testAddress': '山东',
+          'testDate': '2020-01-01',
+          'state': '登记完成',
+          'shipmentDate': '2020-01-01',
+          'shipment': 'Air',
+          'carrier': '米奇',
+          'applican': '米妮',
+          'applicantDate': '2020-01-01',
+          'name': 'WEDDDEF DSFSG  DVSDVDSV',
+          'contacts': '张三',
+          'contactNumber': '15999999999',
+          'remarks': '123456'
+        }
+      ], // 表格
+      typeOptions: ['PC1', 'PC2', 'PC3', 'SC'], // 证书类型select
+      stateOptions: ['登记完成', '检验下发'], // 当前状态select
+      listQuery: { // 搜索条件
         page: 1,
         limit: 20,
-        importance: undefined,
-        title: undefined,
+        commissionNo: undefined,
         name: undefined,
-        type: undefined,
-        sort: '+id'
+        idf: undefined,
+        contacts: undefined,
+        contactNumber: undefined,
+        fax: undefined,
+        state: undefined,
+        remarks: undefined
       },
-      importanceOptions: ['未复核', '待接收', '待指派', '待检验'],
-      calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
+      currentPage: 1, // 默认显示页面为1
+      pagesize: 20, // 每页的数据条数
+      dialogPublishVisible: false, // 隐藏详情
+      dialogPublish: '',
+      dialogDetailsVisible: false, // 隐藏下发
+      dialogDetails: '',
+      dialogRecordsVisible: false,
       temp: {
         id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
+        commissionNo: '',
         name: '',
-        type: '',
-        status: 'published'
+        idf: '',
+        contacts: '',
+        contactNumber: '',
+        fax: '',
+        state: 1,
+        remarks: ''
       },
-      pvData: [],
-      rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }],
-        name: [{ required: true, message: 'name is required', trigger: 'blur' }]
-      },
-      multipleSelection: []
+      activities: [{
+        content: '步骤1',
+        timestamp: '2018-04-12 20:46',
+        color: '#0bbd87'
+      }, {
+        content: '步骤2',
+        timestamp: '2018-04-03 20:46',
+        color: '#0bbd87'
+      }, {
+        content: '步骤3',
+        timestamp: '2018-04-03 20:46'
+      }, {
+        content: '步骤4',
+        timestamp: '2018-04-03 20:46'
+      }],
+      multipleSelection: [] // 表格选中的行
     }
   },
   created() {
-    this.getList()
+    // this.getList()
   },
   methods: {
-    getList() {
-      this.listLoading = true
-      fetchList(this.listQuery).then(response => {
-        this.list = response.data.items
-        this.total = response.data.total
-
-        // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
-      })
-    },
-    handleFilter() {
-      this.listQuery.page = 1
-      this.getList()
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
-    },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
-      this.handleFilter()
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
-        }
-      }))
-    },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
-    },
-    // toggleSelection(rows) {
-    //   if (rows) {
-    //     rows.forEach(row => {
-    //       this.$refs.multipleTable.toggleRowSelection(row);
-    //     });
-    //   } else {
-    //     this.$refs.multipleTable.clearSelection();
-    //   }
+    /**
+     * 获取table数据
+     */
+    // getList() {
+    //   this.listLoading = true
+    //   fetchList(this.listQuery).then(response => {
+    //     this.list = response.data.items
+    //     this.total = response.data.total
+    //     setTimeout(() => {
+    //       this.listLoading = false
+    //     }, 1.5 * 1000)
+    //   })
     // },
+    /**
+     * 点击了搜索
+     */
+    handleFilter() {
+      this.currentPage = 1
+      console.log('发生了改变')
+    },
+    /**
+     * 保存table选中结果
+     */
     handleSelectionChange(val) {
       this.multipleSelection = val
-      // console.log(val)
+      console.log(val)
+    },
+    /**
+     * 分页
+     */
+    handleSizeChange(size) {
+      this.pagesize = size
+    },
+    /**
+     * 点击了详情
+     */
+    handlePublish(row) {
+      this.temp = Object.assign({}, row)
+      this.dialogPublishVisible = true
+    },
+    /**
+     * 点击了下发
+     */
+    handleDetails(row) {
+      this.temp = Object.assign({}, row)
+      this.dialogDetailsVisible = true
+    },
+    /**
+     * 点击了第几页
+     */
+    handleCurrentChange(currentPage) {
+      this.currentPage = currentPage
+      // /*console.log(this.currentPage) */
+    },
+    /**
+     * 点击了审核
+     */
+    examineClick() {},
+    /**
+     * 点击了审核记录
+     */
+    examineRecordClick() {
+      this.dialogRecordsVisible = true
     }
   }
 }
 </script>
 <style lang="scss" scoped>
   .el-table thead{color: #1890ff}
+  .pagination{margin-top: 30px}
+  .filter-container .filter-item{
+    margin-bottom: 0;
+  }
 </style>
