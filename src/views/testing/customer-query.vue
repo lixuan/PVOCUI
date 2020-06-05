@@ -31,12 +31,6 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button v-waves class="filter-item" type="success" icon="el-icon-star-on" @click="examineClick">
-        审核
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-info" @click="examineRecordClick">
-        审核记录
-      </el-button>
     </div>
 
     <el-table
@@ -124,13 +118,10 @@
           <span>{{ row.remarks }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="160">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handlePublish(row)">
             详情
-          </el-button>
-          <el-button size="mini" type="success" @click="handleDetails(row)">
-            审核
           </el-button>
         </template>
       </el-table-column>
@@ -152,27 +143,14 @@
       />
     </div>
     <el-dialog title="查看详情" :visible.sync="dialogPublishVisible">
-      内容
-    </el-dialog>
-    <el-dialog title="核验下发" :visible.sync="dialogDetailsVisible">
-      是否
-    </el-dialog>
-    <el-dialog title="审核记录" :visible.sync="dialogRecordsVisible">
-      <el-timeline>
-        <el-timeline-item
-          v-for="(activity, index) in activities"
-          :key="index"
-          :icon="activity.icon"
-          :type="activity.type"
-          :color="activity.color"
-          :size="activity.size"
-          :timestamp="activity.timestamp"
-        >
-          {{ activity.content }}
-        </el-timeline-item>
-      </el-timeline>
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="申请信息" name="first" />
+        <el-tab-pane label="检验项目" name="second" />
+        <el-tab-pane label="检验依据" name="third" />
+      </el-tabs>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogRecordsVisible = false">关 闭</el-button>
+        <el-button @click="dialogPublishVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogPublishVisible = false">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -182,7 +160,7 @@
 import waves from '@/directive/waves'
 
 export default {
-  name: 'DataReview',
+  name: 'CustomerQuery',
   directives: { waves },
   data() {
     return {
@@ -549,9 +527,6 @@ export default {
       pagesize: 20, // 每页的数据条数
       dialogPublishVisible: false, // 隐藏详情
       dialogPublish: '',
-      dialogDetailsVisible: false, // 隐藏下发
-      dialogDetails: '',
-      dialogRecordsVisible: false,
       temp: {
         id: undefined,
         commissionNo: '',
@@ -563,21 +538,7 @@ export default {
         state: 1,
         remarks: ''
       },
-      activities: [{
-        content: '步骤1',
-        timestamp: '2018-04-12 20:46',
-        color: '#0bbd87'
-      }, {
-        content: '步骤2',
-        timestamp: '2018-04-03 20:46',
-        color: '#0bbd87'
-      }, {
-        content: '步骤3',
-        timestamp: '2018-04-03 20:46'
-      }, {
-        content: '步骤4',
-        timestamp: '2018-04-03 20:46'
-      }],
+      activeName: 'first', // 选项卡
       multipleSelection: [] // 表格选中的行
     }
   },
@@ -615,7 +576,7 @@ export default {
     /**
      * 分页
      */
-    handleSizeChange(size) {
+    handleSizeChange: function(size) {
       this.pagesize = size
     },
     /**
@@ -626,28 +587,14 @@ export default {
       this.dialogPublishVisible = true
     },
     /**
-     * 点击了下发
-     */
-    handleDetails(row) {
-      this.temp = Object.assign({}, row)
-      this.dialogDetailsVisible = true
-    },
-    /**
      * 点击了第几页
      */
-    handleCurrentChange(currentPage) {
+    handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage
       // /*console.log(this.currentPage) */
     },
-    /**
-     * 点击了审核
-     */
-    examineClick() {},
-    /**
-     * 点击了审核记录
-     */
-    examineRecordClick() {
-      this.dialogRecordsVisible = true
+    handleClick(tab, event) {
+      console.log(tab, event)
     }
   }
 }

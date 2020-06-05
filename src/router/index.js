@@ -61,23 +61,7 @@ export const constantRoutes = [
         meta: { title: 'Home', icon: 'dashboard', affix: true }
       }
     ]
-  },
-  // 个人中心
-  {
-    path: '/profile',
-    component: Layout,
-    redirect: '/profile/index',
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'profile', icon: 'user', noCache: true }
-      }
-    ]
-  }
-]
+  }]
 
 /**
  * 异步路由
@@ -93,14 +77,14 @@ export const asyncRoutes = [
     name: 'Permission',
     meta: {
       title: 'Entrust',
-      icon: 'lock',
+      icon: 'star',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       // 业务录入
       {
         path: 'business-registration',
-        component: () => import('@/views/permission/page'),
+        component: () => import('@/views/business/page'),
         name: 'PagePermission',
         meta: {
           title: 'BusinessRegistration',
@@ -110,7 +94,7 @@ export const asyncRoutes = [
       // 核验下发
       {
         path: 'taskquery',
-        component: () => import('@/views/permission/role'),
+        component: () => import('@/views/business/role'),
         name: 'RolePermission',
         meta: {
           title: 'TaskQuery',
@@ -120,7 +104,7 @@ export const asyncRoutes = [
       // 检验复核
       {
         path: 'data-eview',
-        component: () => import('@/views/permission/data-eview'),
+        component: () => import('@/views/business/data-eview'),
         name: 'DataReview',
         meta: {
           title: 'DataReview'
@@ -129,7 +113,7 @@ export const asyncRoutes = [
       // 检验查询
       {
         path: 'inspection-query',
-        component: () => import('@/views/permission/directive'),
+        component: () => import('@/views/business/directive'),
         name: 'InspectionQuery',
         meta: {
           title: 'InspectionQuery'
@@ -146,21 +130,21 @@ export const asyncRoutes = [
     name: 'qualityTesting',
     meta: {
       title: 'qualityTesting',
-      icon: 'lock',
+      icon: 'example',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       // 检验计划
       {
         path: 'task-allocation',
-        component: () => import('@/views/quality-testing/task-allocation'),
+        component: () => import('@/views/testing/task-allocation'),
         name: 'TaskAllocation',
         meta: { title: 'TaskAllocation' }
       },
       // 检验鉴定
       {
         path: 'work-records',
-        component: () => import('@/views/quality-testing/work'),
+        component: () => import('@/views/testing/work'),
         name: 'WorkPermission',
         meta: {
           title: 'WorkRecords'
@@ -169,7 +153,7 @@ export const asyncRoutes = [
       // 鉴定历史
       {
         path: 'customer-query',
-        component: () => import('@/views/quality-testing/customer-query'),
+        component: () => import('@/views/testing/customer-query'),
         name: 'customerQuery',
         meta: { title: 'customerQuery' }
       }
@@ -190,13 +174,13 @@ export const asyncRoutes = [
     name: 'customerTesting',
     meta: {
       title: 'customerTesting',
-      icon: 'lock',
+      icon: 'user',
       roles: ['admin', 'editor'] // you can set roles in root nav
     },
     children: [
       {
         path: 'customer-history',
-        component: () => import('@/views/tab/index'),
+        component: () => import('@/views/customer/index'),
         name: 'customerHistory',
         meta: { title: 'customerHistory', icon: 'tab' }
       }

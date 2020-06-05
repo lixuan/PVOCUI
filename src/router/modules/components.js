@@ -9,27 +9,27 @@ const componentsRouter = {
   name: 'ComponentDemo',
   meta: {
     title: 'Certificate',
-    icon: 'component'
+    icon: 'table'
   },
   children: [
     // 证书生成
     {
       path: 'certificate-recheck',
-      component: () => import('@/views/components-demo/tinymce'),
+      component: () => import('@/views/certificates/tinymce'),
       name: 'TinymceDemo',
       meta: { title: 'tinymce' }
     },
     // 证书签发
     {
       path: 'certificate-issued',
-      component: () => import('@/views/components-demo/markdown'),
+      component: () => import('@/views/certificates/markdown'),
       name: 'MarkdownDemo',
       meta: { title: 'markdown' }
     },
     // 证书邮寄
     {
       path: 'certificate-mailing',
-      component: () => import('@/views/components-demo/json-editor'),
+      component: () => import('@/views/certificates/json-editor'),
       name: 'JsonEditorDemo',
       meta: { title: 'jsonEditor' }
     }

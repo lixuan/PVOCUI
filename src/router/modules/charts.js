@@ -9,20 +9,20 @@ const chartsRouter = {
   name: 'Charts',
   meta: {
     title: 'Financial',
-    icon: 'chart'
+    icon: 'money'
   },
   children: [
     // 检验计费
     {
       path: 'billing',
-      component: () => import('@/views/charts/keyboard'),
+      component: () => import('@/views/finance/keyboard'),
       name: 'KeyboardChart',
       meta: { title: 'keyboardChart', noCache: true }
     },
     // 计费核算
     {
       path: 'billing-details',
-      component: () => import('@/views/charts/billing-details'),
+      component: () => import('@/views/finance/billing-details'),
       name: 'BillingDetails',
       meta: { title: 'BillingDetails', noCache: true }
     }

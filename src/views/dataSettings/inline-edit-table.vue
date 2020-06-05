@@ -1,13 +1,13 @@
 <template>
   <div class="components-container">
-    计费标准
+    字典
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'InlineEditTable',
+  name: 'Dictionaries',
   data() {
     return {}
   },

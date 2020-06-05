@@ -1,14 +1,15 @@
 <template>
   <div class="components-container">
-    审核标准
+    币种费率
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'DynamicTable',
-  components: {}
+  name: 'CurrencyRate'
 }
 </script>
 
+<style scoped>
+
+</style>

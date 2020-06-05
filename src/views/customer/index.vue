@@ -118,10 +118,13 @@
           <span>{{ row.remarks }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="180">
         <template slot-scope="{row}">
           <el-button size="mini" type="primary" @click="handlePublish(row)">
             详情
+          </el-button>
+          <el-button size="small" type="success" @click="handleDetails(row)">
+            证书确认
           </el-button>
         </template>
       </el-table-column>
@@ -143,7 +146,140 @@
       />
     </div>
     <el-dialog title="查看详情" :visible.sync="dialogPublishVisible">
-      内容
+      <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="基本信息" name="first" />
+        <el-tab-pane label="货物提单信息" name="second" />
+        <el-tab-pane label="出口商信息" name="third" />
+        <el-tab-pane label="进口商信息" name="fourth" />
+      </el-tabs>
+      <el-dialog
+        title="申请续表/附件"
+        :visible.sync="innerVisible"
+        append-to-body
+      >
+        <el-tabs v-model="activeContinued" @tab-click="handleClick">
+          <el-tab-pane label="申请续表" name="first">
+            <el-table
+              :key="tableKey"
+              :data="continuedList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+              border
+              fit
+              highlight-current-row
+              height="300"
+              style="width: 100%;"
+            >
+              <el-table-column label="货号" align="center" width="100px">
+                <template slot-scope="{row}">
+                  <span>{{ row.id }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="HS编码" align="center" class="link-type">
+                <template slot-scope="{row}">
+                  <span>{{ row.HScode }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="数量" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.amount }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="单位" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.company }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="品牌" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.brand }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="型号" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.type }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="产品描述" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.product }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="参考标准" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.consult }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="注册/许可号" align="center" width="110">
+                <template slot-scope="{row}">
+                  <span>{{ row.licenseNo }}</span>
+                </template>
+              </el-table-column>
+              <!--            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="160">-->
+              <!--              <template slot-scope="{row,$index}">-->
+              <!--                <el-button size="mini" type="primary" @click="handleUpdate(row)">-->
+              <!--                  编辑-->
+              <!--                </el-button>-->
+              <!--                <el-button size="mini" type="success" @click="handleDelete(row,$index)">-->
+              <!--                  删除-->
+              <!--                </el-button>-->
+              <!--              </template>-->
+              <!--            </el-table-column>-->
+            </el-table>
+          </el-tab-pane>
+          <el-tab-pane label="附件列表" name="second">
+            <el-button v-waves class="filter-item" type="primary" icon="el-icon-download" style="margin-bottom: 10px">
+              批量下载
+            </el-button>
+            <el-table
+              :key="tableKey"
+              :data="enclosureList.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+              border
+              fit
+              highlight-current-row
+              height="300"
+              style="width: 100%;"
+              @selection-change="handleSelectionChange"
+            >
+              <el-table-column type="selection" align="center" />
+              <el-table-column label="附件名称" align="center" class="link-type">
+                <template slot-scope="{row}">
+                  <span>{{ row.name }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="类型" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.type }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="上传人" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.uploader }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="上传时间" align="center">
+                <template slot-scope="{row}">
+                  <span>{{ row.uploadDate }}</span>
+                </template>
+              </el-table-column>
+            </el-table>
+          </el-tab-pane>
+        </el-tabs>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="innerVisible = false">取 消</el-button>
+          <el-button type="primary" @click="innerVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogPublishVisible = false">取 消</el-button>
+        <el-button type="primary" @click="innerVisible = true">打开申请续表/附件</el-button>
+        <el-button type="primary" @click="dialogPublishVisible = false">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="证书确认" :visible.sync="dialogDetailsVisible">
+      证书确认
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogDetailsVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogDetailsVisible = false">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -152,7 +288,7 @@
 import waves from '@/directive/waves'
 
 export default {
-  name: 'CustomerQuery',
+  name: 'CustomerHistory',
   directives: { waves },
   data() {
     return {
@@ -501,6 +637,95 @@ export default {
           'remarks': '123456'
         }
       ], // 表格
+      continuedList: [
+        {
+          'id': 1,
+          'HScode': '',
+          'amount': '',
+          'company': '',
+          'brand': '',
+          'product': '',
+          'consult': '',
+          'licenseNo': ''
+        },
+        {
+          'id': 2,
+          'HScode': '',
+          'amount': '',
+          'company': '',
+          'brand': '',
+          'product': '',
+          'consult': '',
+          'licenseNo': ''
+        },
+        {
+          'id': 3,
+          'HScode': '',
+          'amount': '',
+          'company': '',
+          'brand': '',
+          'product': '',
+          'consult': '',
+          'licenseNo': ''
+        },
+        {
+          'id': 4,
+          'HScode': '',
+          'amount': '',
+          'company': '',
+          'brand': '',
+          'product': '',
+          'consult': '',
+          'licenseNo': ''
+        },
+        {
+          'id': 5,
+          'HScode': '',
+          'amount': '',
+          'company': '',
+          'brand': '',
+          'product': '',
+          'consult': '',
+          'licenseNo': ''
+        }
+      ], // 申请续表表格
+      enclosureList: [
+        {
+          'id': 1,
+          'name': '',
+          'type': '',
+          'uploader': '',
+          'uploadDate': ''
+        },
+        {
+          'id': 2,
+          'name': '',
+          'type': '',
+          'uploader': '',
+          'uploadDate': ''
+        },
+        {
+          'id': 3,
+          'name': '',
+          'type': '',
+          'uploader': '',
+          'uploadDate': ''
+        },
+        {
+          'id': 4,
+          'name': '',
+          'type': '',
+          'uploader': '',
+          'uploadDate': ''
+        },
+        {
+          'id': 5,
+          'name': '',
+          'type': '',
+          'uploader': '',
+          'uploadDate': ''
+        }
+      ], // 附件列表
       typeOptions: ['PC1', 'PC2', 'PC3', 'SC'], // 证书类型select
       stateOptions: ['登记完成', '检验下发'], // 当前状态select
       listQuery: { // 搜索条件
@@ -519,6 +744,9 @@ export default {
       pagesize: 20, // 每页的数据条数
       dialogPublishVisible: false, // 隐藏详情
       dialogPublish: '',
+      dialogDetailsVisible: false, // 隐藏下发
+      dialogDetails: '',
+      innerVisible: false,
       temp: {
         id: undefined,
         commissionNo: '',
@@ -530,6 +758,11 @@ export default {
         state: 1,
         remarks: ''
       },
+      ruleForm: {},
+      checkList: [], // 检验项目
+      checkLists: [], // 检验依据
+      activeName: 'first',
+      activeContinued: 'first',
       multipleSelection: [] // 表格选中的行
     }
   },
@@ -578,11 +811,39 @@ export default {
       this.dialogPublishVisible = true
     },
     /**
+     * 点击了下发
+     */
+    handleDetails(row) {
+      this.temp = Object.assign({}, row)
+      this.dialogDetailsVisible = true
+    },
+    /**
      * 点击了第几页
      */
     handleCurrentChange: function(currentPage) {
       this.currentPage = currentPage
       // /*console.log(this.currentPage) */
+    },
+    handleClick(tab, event) {
+      console.log(tab, event)
+    },
+    handleUpdate(row) {
+      this.temp = Object.assign({}, row) // copy obj
+      this.temp.timestamp = new Date(this.temp.timestamp)
+      this.dialogStatus = 'update'
+      this.dialogFormVisible = true
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate()
+      })
+    },
+    handleDelete(row, index) {
+      this.$notify({
+        title: '成功',
+        message: '删除成功',
+        type: 'success',
+        duration: 2000
+      })
+      this.continuedList.splice(index, 1)
     }
   }
 }
@@ -593,4 +854,6 @@ export default {
   .filter-container .filter-item{
     margin-bottom: 0;
   }
+  .wrapper-title{color: #1890ff}
+  .check-style p{padding-bottom: 10px}
 </style>

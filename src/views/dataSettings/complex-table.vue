@@ -1,22 +1,19 @@
 <template>
   <div class="components-container">
-    客户查询
+    费目维护
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'CustomerHistory',
+  name: 'CostRate',
   components: {},
+  directives: {},
   data() {
     return {}
   },
-  watch: {},
   created() {},
   methods: {}
 }
 </script>
-
-<style scoped>
-</style>

@@ -25,15 +25,15 @@ export default {
     customerHistory: '申请查询',
 
     DataMaintenance: '基础数据',
-    dynamicTable: '审核标准',
-    dragTable: '进出口商信息',
-    inlineEditTable: '计费标准',
-    complexTable: '汇率维护',
-    toReview: '复核详情',
-    DetailsIssued: '签发详情',
-    Entrustment: '委托详情',
-    TaskAcceptance: '任务接收',
-    CertificateDetails: '证书详情'
+    UserManagement: '用户',
+    RoleManagement: '角色',
+    Dictionaries: '字典',
+    DepartmentSafeguard: '部门维护',
+    CountrySafeguard: '国家维护',
+    PortSafeguard: '港口维护',
+    CostRate: '费目维护',
+    CurrencyRate: '币种费率',
+    CustomerInfo: '客户信息'
   },
   navbar: {
     dashboard: '首页',

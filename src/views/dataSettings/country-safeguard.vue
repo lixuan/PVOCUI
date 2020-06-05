@@ -1,21 +1,15 @@
 <template>
   <div class="components-container">
-    进出口商信息
+    国家维护
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'DragTable',
-  data() {
-    return {}
-  },
-  created() {},
-  methods: {}
+  name: 'CountrySafeguard'
 }
 </script>
 
-<style>
+<style scoped>
 
 </style>

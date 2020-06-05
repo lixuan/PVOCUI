@@ -88,49 +88,50 @@ export default {
         desc: '',
         examineValue: ''
       },
-      tableData: [{
-        project: '基本检验费',
-        type: 'USD',
-        amount: '0',
-        rate: '6.89',
-        conversion: ''
-      }, {
-        project: '检测样品取样费',
-        type: 'USD',
-        amount: '0',
-        rate: '6.89',
-        conversion: ''
-      }, {
-        project: '产品审核注册费',
-        type: 'USD',
-        amount: '0',
-        rate: '6.89',
-        conversion: ''
-      }, {
-        project: '产品进口许可证申请费',
-        type: 'USD',
-        amount: '375',
-        rate: '6.89',
-        conversion: '2583.75'
-      }, {
-        project: '产品检验检测费',
-        type: 'USD',
-        amount: '0',
-        rate: '6.89',
-        conversion: ''
-      }, {
-        project: '证书邮寄费',
-        type: 'USD',
-        amount: '0',
-        rate: '6.89',
-        conversion: ''
-      }, {
-        project: '合计',
-        type: '',
-        amount: '0375',
-        rate: '6.89',
-        conversion: '2583.75'
-      }]
+      tableData: [
+        {
+          project: '基本检验费',
+          type: 'USD',
+          amount: '0',
+          rate: '6.89',
+          conversion: ''
+        }, {
+          project: '检测样品取样费',
+          type: 'USD',
+          amount: '0',
+          rate: '6.89',
+          conversion: ''
+        }, {
+          project: '产品审核注册费',
+          type: 'USD',
+          amount: '0',
+          rate: '6.89',
+          conversion: ''
+        }, {
+          project: '产品进口许可证申请费',
+          type: 'USD',
+          amount: '375',
+          rate: '6.89',
+          conversion: '2583.75'
+        }, {
+          project: '产品检验检测费',
+          type: 'USD',
+          amount: '0',
+          rate: '6.89',
+          conversion: ''
+        }, {
+          project: '证书邮寄费',
+          type: 'USD',
+          amount: '0',
+          rate: '6.89',
+          conversion: ''
+        }, {
+          project: '合计',
+          type: '',
+          amount: '0375',
+          rate: '6.89',
+          conversion: '2583.75'
+        }]
     }
   },
   created() {

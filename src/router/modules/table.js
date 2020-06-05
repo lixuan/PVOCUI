@@ -6,46 +6,74 @@ const tableRouter = {
   path: '/data',
   component: Layout,
   redirect: '/table/complex-table',
-  name: 'Table',
+  name: 'DataMaintenance',
   meta: {
     title: 'DataMaintenance',
     icon: 'table'
   },
   children: [
-    // 审核标准
+    // 用户
     {
-      path: 'audit-criteria',
-      component: () => import('@/views/table/dynamic-table/index'),
-      name: 'DynamicTable',
-      meta: { title: 'dynamicTable' }
+      path: 'user-management',
+      component: () => import('@/views/dataSettings/index'),
+      name: 'UserManagement',
+      meta: { title: 'UserManagement' }
     },
-    // 进出口商信息
+    // 角色
     {
-      path: 'importer-exporter',
-      component: () => import('@/views/table/drag-table'),
-      name: 'DragTable',
-      meta: { title: 'dragTable' }
+      path: 'role-management',
+      component: () => import('@/views/dataSettings/drag-table'),
+      name: 'RoleManagement',
+      meta: { title: 'RoleManagement' }
     },
-    // 计费标准
+    // 字典
     {
-      path: 'freight-basis',
-      component: () => import('@/views/table/inline-edit-table'),
-      name: 'InlineEditTable',
-      meta: { title: 'inlineEditTable' }
+      path: 'dictionaries',
+      component: () => import('@/views/dataSettings/inline-edit-table'),
+      name: 'Dictionaries',
+      meta: { title: 'Dictionaries' }
     },
-    // 汇率维护
+    // 部门维护
     {
-      path: 'exchange-rate',
-      component: () => import('@/views/table/complex-table'),
-      name: 'ComplexTable',
-      meta: { title: 'complexTable' }
+      path: 'department-safeguard',
+      component: () => import('@/views/dataSettings/department-safeguard'),
+      name: 'DepartmentSafeguard',
+      meta: { title: 'DepartmentSafeguard' }
     },
-    // 复核详情
+    // 国家维护
     {
-      path: 'review-details',
-      component: () => import('@/views/table/to-review'),
-      name: 'toReview',
-      meta: { title: 'toReview' }
+      path: 'country-safeguard',
+      component: () => import('@/views/dataSettings/country-safeguard'),
+      name: 'CountrySafeguard',
+      meta: { title: 'CountrySafeguard' }
+    },
+    // 港口维护
+    {
+      path: 'port-safeguard',
+      component: () => import('@/views/dataSettings/port-safeguard'),
+      name: 'PortSafeguard',
+      meta: { title: 'PortSafeguard' }
+    },
+    // 费目维护
+    {
+      path: 'cost-rate',
+      component: () => import('@/views/dataSettings/complex-table'),
+      name: 'CostRate',
+      meta: { title: 'CostRate' }
+    },
+    // 币种费率
+    {
+      path: 'currency-rate',
+      component: () => import('@/views/dataSettings/currency-rate'),
+      name: 'CurrencyRate',
+      meta: { title: 'CurrencyRate' }
+    },
+    // 客户信息
+    {
+      path: 'customer-info',
+      component: () => import('@/views/dataSettings/to-review'),
+      name: 'CustomerInfo',
+      meta: { title: 'CustomerInfo' }
     }
   ]
 }
