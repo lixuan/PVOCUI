@@ -36,9 +36,9 @@
       <el-button v-waves class="filter-item" type="danger" icon="el-icon-close" @click="handleFilter">
         驳回
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-info" @click="handleFilter">
-        审核记录
-      </el-button>
+      <!--      <el-button v-waves class="filter-item" type="primary" icon="el-icon-info" @click="handleFilter">-->
+      <!--        审核记录-->
+      <!--      </el-button>-->
     </div>
 
     <el-table

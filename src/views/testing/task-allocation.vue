@@ -1,134 +1,132 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.applicantNo" placeholder="申请号" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.type" placeholder="证书类型" clearable style="width: 150px" class="filter-item" @change="handleFilter">
+      <el-input v-model="listQuery.busNO" placeholder="申请号" style="width: 150px;" class="filter-item" @keyup.enter.native="getTableList()" />
+      <el-select v-model="listQuery.businessCode" placeholder="证书类型" clearable style="width: 150px" class="filter-item" @change="getTableList()">
         <el-option v-for="item in typeOptions" :key="item" :label="item" :value="item" />
       </el-select>
-      <el-input v-model="listQuery.name" placeholder="客户名称" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.portCode" placeholder="检验地点" style="width: 150px;" class="filter-item" @keyup.enter.native="getTableList()" />
       <el-date-picker
-        v-model="listQuery.testDate"
-        style="width: 150px;"
-        type="date"
-        placeholder="检验日期"
+        v-model="listQuery.jyTime"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="检验日期开始"
+        end-placeholder="检验日期结束"
+        @change="jyTime"
       />
       <el-date-picker
-        v-model="listQuery.shipmentDate"
-        style="width: 150px;"
-        type="date"
-        placeholder="出运日期"
+        v-model="listQuery.cyTime"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="出运日期开始"
+        end-placeholder="出运日期结束"
+        @change="cyTime"
       />
       <el-date-picker
-        v-model="listQuery.applicantDate"
-        style="width: 150px;"
-        type="date"
-        placeholder="申请日期"
+        v-model="listQuery.sqTime"
+        value-format="yyyy-MM-dd"
+        type="daterange"
+        range-separator="至"
+        start-placeholder="申请日期开始"
+        end-placeholder="申请日期结束"
+        @change="sqTime"
       />
-      <el-select v-model="listQuery.state" placeholder="申请状态" clearable style="width: 130px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in stateOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="getTableList()">
         搜索
       </el-button>
-      <el-button v-waves class="filter-item" type="success" icon="el-icon-thumb" @click="handleFilter">
+      <el-button v-waves class="filter-item" type="success" icon="el-icon-thumb" @click="batchHandleDetails(tabelChecked)">
         分配
       </el-button>
-      <el-button v-waves class="filter-item" type="danger" icon="el-icon-close" @click="handleFilter">
-        驳回
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-info" @click="handleFilter">
-        审核记录
-      </el-button>
+      <!--      <el-button v-waves class="filter-item" type="primary" icon="el-icon-info" @click="examineRecordClick">-->
+      <!--        审核记录-->
+      <!--      </el-button>-->
     </div>
 
     <el-table
       :key="tableKey"
-      :data="list.slice((currentPage-1)*pagesize,currentPage*pagesize)"
+      :data="list"
       border
       fit
       highlight-current-row
       style="width: 100%;"
-      @selection-change="handleSelectionChange"
+      @selection-change="onSelectChange"
     >
       <el-table-column type="selection" align="center" />
-      <el-table-column label="序号" align="center" width="50px">
+      <el-table-column label="序号" align="center" width="50px" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <span>{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="申请号" align="center" class="link-type">
+      <el-table-column label="申请号" align="center" class="link-type" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.applicantNo }}</span>
+          <span>{{ row.busNO }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="证书类型" align="center">
+      <el-table-column label="证书类型" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.type }}</span>
+          <span>{{ row.businessCode }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="检验地点" align="center">
+      <el-table-column label="检验地点" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.testAddress }}</span>
+          <span>{{ row.portName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="检验日期" align="center">
+      <el-table-column label="检验日期" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.testDate }}</span>
+          <span>{{ row.inspectTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="申请状态" align="center">
+      <el-table-column label="申请状态" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.state }}</span>
+          <span>{{ row.checkName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出运日期" align="center">
+      <el-table-column label="出运日期" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.shipmentDate }}</span>
+          <span>{{ row.expectedTime }} - {{ row.EndExpectedTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="出运方式" align="center">
+      <el-table-column label="出运方式" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.shipment }}</span>
+          <span>{{ row.modeTransport }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="承运人" align="center">
+      <el-table-column label="承运人" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.carrier }}</span>
+          <span>{{ row.carrierCodeName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="申请人" align="center">
+      <el-table-column label="申请人" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.applican }}</span>
+          <span>{{ row.creatorUserName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="申请日期" align="center">
+      <el-table-column label="申请日期" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.applicantDate }}</span>
+          <span>{{ row.creationTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="客户名称" align="center">
+      <el-table-column label="客户名称" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.name }}</span>
+          <span>{{ row.cusName|| '客户1' }} </span>
         </template>
       </el-table-column>
-      <el-table-column label="联系人" align="center">
+      <el-table-column label="联系电话" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.contacts }}</span>
+          <span>{{ row.cusTel || '暂无' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系电话" align="center">
+      <el-table-column label="备注" align="center" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
-          <span>{{ row.contactNumber }}</span>
+          <span>{{ row.remarks || '无' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="备注" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.remarks }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="230">
-        <template slot-scope="{row}">
-          <el-button size="mini" type="primary" @click="handlePublish(row)">
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="300px">
+        <template slot-scope="{row,$index}">
+          <el-button size="mini" type="primary" @click="confirmClick(row)">
             详情
           </el-button>
           <el-button size="mini" type="success" @click="handleDetails(row)">
@@ -140,484 +138,338 @@
         </template>
       </el-table-column>
     </el-table>
-
-    <div class="pagination">
-      <el-pagination
-        v-show="pagesize>0"
-        background
-        :current-page="currentPage"
-        :page-sizes="[10, 20, 30, 50]"
-        :page-size="pagesize"
-        layout="total, sizes,prev, pager, next"
-        :total="list.length"
-        prev-text="上一页"
-        next-text="下一页"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
-    </div>
+    <el-pagination
+      style="margin-top:10px;"
+      :current-page="page.currentPage"
+      :page-size="page.pageSize"
+      :total="page.total"
+      :page-sizes="page.pageSelectArr"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+    />
     <el-dialog title="查看详情" :visible.sync="dialogDetailsVisible">
-      内容
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="基本信息" name="first">
+          <div class="jbxx">
+            <el-row>
+              <el-col :xs="24" :sm="24" :lg="12">
+                <p><span>申请号:</span> {{ this.busNO }}</p>
+                <p><span>申请日期:</span> {{ this.creationTime }}</p>
+                <p><span>所申请证书类型:</span> {{ this.businessCode }}</p>
+                <p><span>检验港口:</span> {{ this.portCode }}</p>
+                <p><span>预约检验时间:</span> {{ this.inspectTime }}</p>
+                <p><span>出口商/制造商信息名称:</span> {{ this.exportCountry }}</p>
+                <p><span>进口商信息名称:</span> {{ this.importCountry }}</p>
+                <p><span>发票号:</span> {{ this.finalInvoiceNO }}</p>
+                <p><span>发票日期:</span> {{ this.invoiceTime }}</p>
+              </el-col>
+              <el-col :xs="24" :sm="24" :lg="12">
+                <p><span>FOB价格:</span> {{ this.fobPrice }}</p>
+                <p><span>FOB币种:</span> {{ this.fobCurrency }}</p>
+                <p><span>Form ‘M’号:</span> {{ this.formMNO }}</p>
+                <p><span>TIN NO.:</span> {{ this.tinno }}</p>
+                <p><span>BA NO.:</span> {{ this.bano }}</p>
+                <p><span>PC类型:</span> {{ this.pcRoute }}</p>
+                <p><span>RC/BN No:</span> {{ this.rcbnNo }}</p>
+                <p><span>CNAS机构代码:</span> {{ this.cnasCode }}</p>
+                <p><span>信用证号:</span> {{ this.letterNO }}</p>
+              </el-col>
+            </el-row>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="申请续表" name="second">
+          <el-table
+            :key="tableKey"
+            :data="continuedList"
+            border
+            fit
+            highlight-current-row
+            height="300"
+            style="width: 100%;"
+          >
+            <el-table-column label="序号" prop="id" sortable="custom" align="center" width="80">
+              <template slot-scope="{row}">
+                <span>{{ row.id }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="HS编码" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.hsCode }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="数量" align="center">
+              <template slot-scope="{row}">
+                <span class="link-type">{{ row.count }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="单位" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.unit }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="品牌" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.brand }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="型号" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.model }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="产品描述" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.productContent }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="参考标准" class-name="status-col" align="center">
+              <template slot-scope="{row}">
+                {{ row.guideline }}
+              </template>
+            </el-table-column>
+            <el-table-column label="注册/许可号" class-name="status-col" align="center">
+              <template slot-scope="{row}">
+                {{ row.licenseNo }}
+              </template>
+            </el-table-column>
+            <!--            <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" width="160">-->
+            <!--              <template slot-scope="{row,$index}">-->
+            <!--                <el-button size="mini" type="primary" @click="handleUpdate(row)">-->
+            <!--                  编辑-->
+            <!--                </el-button>-->
+            <!--                <el-button size="mini" type="success" @click="handleDelete(row,$index)">-->
+            <!--                  删除-->
+            <!--                </el-button>-->
+            <!--              </template>-->
+            <!--            </el-table-column>-->
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="附件列表" name="three">
+          <el-button v-waves class="filter-item" type="primary" icon="el-icon-download" style="margin-bottom: 10px">
+            批量下载
+          </el-button>
+          <el-table
+            :key="tableKey"
+            border
+            fit
+            highlight-current-row
+            height="300"
+            style="width: 100%;"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" align="center" />
+            <el-table-column label="附件名称" align="center" class="link-type">
+              <template slot-scope="{row}">
+                <span>{{ row.name }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="类型" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.type }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="上传人" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.uploader }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column label="上传时间" align="center">
+              <template slot-scope="{row}">
+                <span>{{ row.uploadDate }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogDetailsVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogDetailsVisible = false">确 定</el-button>
+        <el-button @click="dialogPublishVisible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogPublishVisible = false">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="检验分配" :visible.sync="dialogPublishVisible">
       <el-form ref="ruleForm" :model="ruleForm" label-width="100px">
-        <el-row :gutter="8">
-          <el-col :xs="24" :sm="24" :lg="12">
-            <div class="background-fff">
-              <div class="wrapper-title">检验项目</div>
-              <div style="padding: 20px 0 20px 20px" class="check-style">
-                <el-checkbox-group v-model="checkList">
-                  <p><el-checkbox label="VISUAL QUALIT" /></p>
-                  <p><el-checkbox label="QUANTITY/WEIGHT" /></p>
-                  <p><el-checkbox label="MODEL" /></p>
-                  <p><el-checkbox label="SPECIFICATION/DIMENSION" /></p>
-                  <p><el-checkbox label="SERIAL,No" /></p>
-                  <p><el-checkbox label="MANFACTURER AND/OR BRAND" /></p>
-                  <p><el-checkbox label="COUNTRY OF ORIGIN" /></p>
-                  <p><el-checkbox label="PACKING" /></p>
-                  <p><el-checkbox label="SHIPPING MARK" /></p>
-                  <p><el-checkbox label="LABELING AND MARKING" /></p>
-                  <p><el-checkbox label="MF DATE;EXP DATE(if applicable)" /></p>
-                  <p><el-checkbox label="ELECTRIC RATING(RATED VOLAGE,CYCLE" /></p>
-                  <p><el-checkbox label="TAKE PHOTO" /></p>
-                  <p><el-checkbox label="SAMPLING AND SEALING" /></p>
-                  <p><el-checkbox label="SUPERVISE CONTANER LOADING AND SEALING" /></p>
-                  <p><el-checkbox label="TESTING" /></p>
-                  <p><el-checkbox label="WITNESS TESTING" /></p>
-                  <p><el-checkbox label="FACTORY INSPECTION" /></p>
-                  <p><el-checkbox label="FUMIGATION(for wooden package)" /></p>
-                </el-checkbox-group>
-              </div>
+        <el-row v-show="isShow" :gutter="8">
+          <el-col :xs="24" :sm="24" :lg="24">
+            <div class="wrapper-title" style="padding-bottom: 10px">检验项目</div>
+            <div class="check-style">
+              <el-row>
+                <el-col :xs="24" :sm="24" :lg="8">
+                  <el-checkbox v-model="visualquality" disabled>VISUAL QUALIT</el-checkbox>
+                  <el-checkbox v-model="quantitweight" disabled>QUANTITY/WEIGHT</el-checkbox>
+                  <el-checkbox v-model="takephoto" disabled>TAKE PHOTO</el-checkbox>
+                  <el-checkbox v-model="fumigation" disabled>FUMIGATION</el-checkbox>
+                  <el-checkbox v-model="shippingmark" disabled>SHIPPING MARK</el-checkbox>
+                  <el-checkbox v-model="electricrating" disabled>ELECTRIC RATING</el-checkbox>
+                  <el-checkbox v-model="countryoforigin" disabled>COUNTRY OF ORIGIN</el-checkbox>
+                </el-col>
+                <el-col :xs="24" :sm="24" :lg="8">
+                  <el-checkbox v-model="model" disabled>MODEL</el-checkbox>
+                  <el-checkbox v-model="speccificationdimension" disabled>SPECIFICATION/DIMENSION</el-checkbox>
+                  <el-checkbox v-model="samplingandsealing" disabled>SAMPLING AND SEALING</el-checkbox>
+                  <el-checkbox v-model="supervisecontainerloadingandsealing" disabled>SUPERVISE CONTANER</el-checkbox>
+                  <el-checkbox v-model="witnesstesting" disabled>WITNESS TESTING</el-checkbox>
+                  <el-checkbox v-model="factoryinspection" disabled>FACTORY INSPECTION</el-checkbox>
+                </el-col>
+                <el-col :xs="24" :sm="24" :lg="8">
+                  <el-checkbox v-model="serialno" disabled>SERIAL,No</el-checkbox>
+                  <el-checkbox v-model="manufacturerandorbrand" disabled>MANFACTURER AND/OR BRAND</el-checkbox>
+                  <el-checkbox v-model="packing" disabled>PACKING</el-checkbox>
+                  <el-checkbox v-model="labelingandmarking" disabled>LABELING AND MARKING</el-checkbox>
+                  <el-checkbox v-model="mfgdateexpdateexpdate" disabled>MF DATE;EXP DATE</el-checkbox>
+                  <el-checkbox v-model="testing" disabled>TESTING</el-checkbox>
+                </el-col>
+              </el-row>
             </div>
-          </el-col>
-          <el-col :xs="24" :sm="24" :lg="12">
-            <div class="background-fff">
-              <div class="wrapper-title">检验依据</div>
-              <div style="padding: 20px 0 20px 20px" class="check-style">
-                <el-checkbox-group v-model="checkLists">
-                  <p><el-checkbox label="PS操作程序" /></p>
-                  <p><el-checkbox label="形式发票" /></p>
-                  <p><el-checkbox label="装箱单" /></p>
-                  <p><el-checkbox label="IDF/FORM" /></p>
-                  <p><el-checkbox label="合同" /></p>
-                  <p><el-checkbox label="L/C" /></p>
-                  <p><el-checkbox label="标准" /></p>
-                  <p><el-checkbox label="注册证" /></p>
-                  <p><el-checkbox label="许可证" /></p>
-                  <p><el-checkbox label="测试报告" /></p>
-                </el-checkbox-group>
-              </div>
+            <div class="wrapper-title" style="padding: 10px 0;">检验依据</div>
+            <div class="check-style">
+              <el-row>
+                <el-col :xs="24" :sm="24" :lg="6">
+                  <el-checkbox v-model="license" disabled>许可证</el-checkbox>
+                  <el-checkbox v-model="proformaInvoice" disabled>形式发票</el-checkbox>
+                  <el-checkbox v-model="psop" disabled>PS操作程序</el-checkbox>
+                </el-col>
+                <el-col :xs="24" :sm="24" :lg="6">
+                  <el-checkbox v-model="packingList" disabled>装箱单</el-checkbox>
+                  <el-checkbox v-model="idfformm" disabled>IDF/FORM</el-checkbox>
+                  <el-checkbox v-model="testingReport" disabled>测试报告</el-checkbox>
+                </el-col>
+                <el-col :xs="24" :sm="24" :lg="6">
+                  <el-checkbox v-model="contract" disabled>合同</el-checkbox>
+                  <el-checkbox v-model="lc" disabled>L/C</el-checkbox>
+                </el-col>
+                <el-col :xs="24" :sm="24" :lg="6">
+                  <el-checkbox v-model="standard" disabled>标准</el-checkbox>
+                  <el-checkbox v-model="registered" disabled>注册证</el-checkbox>
+                </el-col>
+              </el-row>
             </div>
           </el-col>
         </el-row>
-        <div style="padding: 20px 0 20px 20px">
-          <el-form-item label="请选择检验人员：" prop="" label-width="150px">
-            <el-checkbox-group v-model="checkList3">
-              <el-checkbox label="检验人员甲" name="type" />
-              <el-checkbox label="检验人员乙" name="type" />
-              <el-checkbox label="检验人员丙" name="type" />
-            </el-checkbox-group>
+        <div style="padding: 20px 0 20px 20px;">
+          <el-form-item label="请选择人员:">
+            <el-cascader v-model="userOptionsValue" placeholder="请选择人员" :options="userOptions" :show-all-levels="false" :props="{ multiple: true, checkStrictly: true }" filterable @change="userOptionsChange" />
           </el-form-item>
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogDetailsVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogDetailsVisible = false">确 定</el-button>
+        <el-button @click="dialogPublishVisible = false">取 消</el-button>
+        <el-button type="primary" @click="distributionClick">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="驳回" :visible.sync="dialogRejectVisible">
-      <el-form ref="ruleForm" :model="ruleForm" label-width="100px">
+      <el-form label-width="100px">
         <div style="padding: 20px 0 20px 20px">
-          <el-form-item label="退回原因：" prop="" label-width="150px">
-            <el-input v-model="ruleForm.desc" type="textarea" placeholder="请填写退回原因" />
-          </el-form-item>
-          <el-form-item label="请选择工作部门：" prop="" label-width="150px">
-            <el-radio v-model="workRadio" label="1">检验鉴定</el-radio>
+          <el-form-item label="驳回原因：" prop="" label-width="150px">
+            <el-input v-model="checkSuggest" type="textarea" placeholder="请填写驳回原因" />
           </el-form-item>
         </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogRejectVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogRejectVisible = false">确 定</el-button>
+        <el-button type="primary" @click="confirmHandleReject">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="审核记录" :visible.sync="dialogRecordsVisible">
+      <el-steps :active="1" align-center>
+        <el-step title="业务登记" description="2020-05-20" />
+        <el-step title="检验下发" description="2020-05-25" />
+        <el-step title="检验复核" description="2020-05-30" />
+        <el-step title="客户确认" description="2020-05-31" />
+        <el-step title="检验计费" description="2020-06-01" />
+        <el-step title="证书生成" description="2020-06-02" />
+      </el-steps>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogRecordsVisible = false">关 闭</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import tree from '../../components/tree/tree'
 import waves from '@/directive/waves'
+import {
+  GetBusinessList,
+  GetContinuedList,
+  GetBusInfoForEdit,
+  getItemsCertificate,
+  getUpdateCheck,
+  getAssignments
+} from '@/api/business'
+import { tableMixin } from '../../mixin/commTable'
+import Pagination from '@/components/Pagination'
+import { getCookie, setCookie } from '@/utils/cookie'
+import { getOrganizationUnitsAndUsersComboBox } from '@/api/user/user/index'
 
 export default {
   name: 'TaskAllocation',
   directives: { waves },
+  components: { Pagination, tree },
+  mixins: [tableMixin],
   data() {
     return {
+      busNO: '',
+      businessCode: '', // 所申请证书类型
+      portCode: '',
+      inspectTime: '',
+      originCountry: '',
+      packNO: '',
+      exportCountry: '',
+      startPort: '',
+      importCountry: '',
+      destination: '',
+      expectedTime: '',
+      modeTransport: '',
+      carrierCode: '',
+      blawbno: '',
+      boxMode: '',
+      containerNO: '',
+      sealNO: '',
+      productStatus: '',
+      exporterCusCode: '',
+      importerCusCode: '',
+      finalInvoiceNO: '',
+      invoiceTime: '',
+      fobPrice: '',
+      fobCurrency: '',
+      formMNO: '',
+      tinno: '',
+      bano: '',
+      pcRoute: '',
+      rcbnNo: '',
+      cnasCode: '',
+      letterNO: '',
+      pvocno: '',
+      productCategory: '',
+      creationTime: '',
+      activeName: 'first',
+      total: 0,
       tableKey: '0',
-      // listLoading: true,  // 加载中
-      list: [
-        {
-          'id': 1,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 2,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 3,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 4,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 5,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 6,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 7,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 8,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 9,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 10,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 11,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 12,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 13,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 14,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 15,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 16,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 17,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 18,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-        {
-          'id': 19,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        },
-
-        {
-          'id': 20,
-          'applicantNo': 'KEC1041651',
-          'type': 'PC1',
-          'testAddress': '山东',
-          'testDate': '2020-01-01',
-          'state': '登记完成',
-          'shipmentDate': '2020-01-01',
-          'shipment': 'Air',
-          'carrier': '米奇',
-          'applican': '米妮',
-          'applicantDate': '2020-01-01',
-          'name': 'WEDDDEF DSFSG  DVSDVDSV',
-          'contacts': '张三',
-          'contactNumber': '15999999999',
-          'remarks': '123456'
-        }
-      ], // 表格
+      ruleForm: {},
+      list: [], // 表格
+      continuedList: [{ id: undefined, busNO: '', hsCode: '', count: '', unit: '', brand: '', model: '', productContent: '', guideline: '', licenseNo: '' }], // 申请续表表格
+      enclosureList: [], // 附件列表
       typeOptions: ['PC1', 'PC2', 'PC3', 'SC'], // 证书类型select
-      stateOptions: ['登记完成', '检验下发'], // 当前状态select
       listQuery: { // 搜索条件
-        page: 1,
-        limit: 20,
-        commissionNo: undefined,
-        name: undefined,
-        idf: undefined,
-        contacts: undefined,
-        contactNumber: undefined,
-        fax: undefined,
-        state: undefined,
-        remarks: undefined
+        busNO: '',
+        businessCode: '',
+        portCode: '',
+        checkCode: '',
+        jyTime: '',
+        cyTime: '',
+        sqTime: ''
       },
+      dialogPublishVisible: false, // 隐藏分配
+      beginInspectTime: '',
+      endInspectTime: '',
+      beginExpectedTime: '',
+      endExpectedTime: '',
+      beginCreationTime: '',
+      endCreationTime: '',
+      // listLoading: true,  // 加载中
       currentPage: 1, // 默认显示页面为1
       pagesize: 20, // 每页的数据条数
-      dialogPublishVisible: false, // 隐藏分配
       dialogPublish: '',
       dialogDetailsVisible: false, // 隐藏详情
       dialogDetails: '',
@@ -634,78 +486,288 @@ export default {
         state: 1,
         remarks: ''
       },
-      ruleForm: {},
       checkList: [], // 检验项目
       checkLists: [], // 检验依据
       checkList3: [], // 选择部门
       multipleSelection: [], // 表格选中的行
-      workRadio: '1'
+      workRadio: '1',
+      dialogRecordsVisible: false,
+      treeComp: {
+        data: [],
+        currNodeID: ''
+      },
+      visualquality: false, // 检验项目
+      quantitweight: false,
+      takephoto: false,
+      fumigation: false,
+      shippingmark: false,
+      electricrating: false,
+      countryoforigin: false,
+      model: false,
+      speccificationdimension: false,
+      samplingandsealing: false,
+      supervisecontainerloadingandsealing: false,
+      witnesstesting: false,
+      factoryinspection: false,
+      serialno: false,
+      manufacturerandorbrand: false,
+      packing: false,
+      labelingandmarking: false,
+      mfgdateexpdateexpdate: false,
+      testing: false,
+      license: false, // 检验依据
+      proformaInvoice: false,
+      psop: false,
+      packingList: false,
+      idfformm: false,
+      testingReport: false,
+      contract: false,
+      lc: false,
+      standard: false,
+      registered: false,
+      checkSuggest: '',
+      isShow: true,
+      ids: [],
+      tabelChecked: [],
+      treeClick: '',
+      assingId: '',
+      userOptions: [],
+      userOptionsValue: '102'
     }
   },
   created() {
-    // this.getList()
+    this.getTableList()
+    this.getAndUsersComboBox()
   },
   methods: {
-    /**
-     * 获取table数据
-     */
-    // getList() {
-    //   this.listLoading = true
-    //   fetchList(this.listQuery).then(response => {
-    //     this.list = response.data.items
-    //     this.total = response.data.total
-    //     setTimeout(() => {
-    //       this.listLoading = false
-    //     }, 1.5 * 1000)
-    //   })
-    // },
-    /**
-     * 点击了搜索
-     */
-    handleFilter() {
-      this.currentPage = 1
-      console.log('发生了改变')
+    // 检验日期
+    jyTime() {
+      for (let i = 0; i < this.listQuery.jyTime.length; i++) {
+        this.beginInspectTime = this.listQuery.jyTime[0]
+        this.endInspectTime = this.listQuery.jyTime[1]
+      }
     },
-    /**
-     * 保存table选中结果
-     */
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-      console.log(val)
+    // 出运日期
+    cyTime() {
+      for (let i = 0; i < this.listQuery.jyTime.length; i++) {
+        this.beginExpectedTime = this.listQuery.cyTime[0]
+        this.endExpectedTime = this.listQuery.cyTime[1]
+      }
     },
-    /**
-     * 分页
-     */
-    handleSizeChange: function(size) {
-      this.pagesize = size
+    // 申请日期
+    sqTime() {
+      for (let i = 0; i < this.listQuery.jyTime.length; i++) {
+        this.beginCreationTime = this.listQuery.sqTime[0]
+        this.endCreationTime = this.listQuery.sqTime[1]
+      }
     },
-    /**
-     * 点击了详情
-     */
-    handlePublish(row) {
+    // 获取业务主表
+    getTableList() {
+      this.table.loading = true
+      const data = {
+        busNO: this.listQuery.busNO,
+        businessCode: this.listQuery.businessCode,
+        portCode: this.listQuery.portCode,
+        beginInspectTime: this.beginInspectTime,
+        endInspectTime: this.endInspectTime,
+        beginExpectedTime: this.beginExpectedTime,
+        endExpectedTime: this.endExpectedTime,
+        checkCode: '2',
+        presentCheck: this.listQuery.presentCheck,
+        beginCreationTime: this.beginCreationTime,
+        endCreationTime: this.endCreationTime
+      }
+      GetBusinessList(data).then(res => {
+        if (res.success) {
+          this.table.loading = false
+          this.list = res.result.items
+        }
+      })
+    },
+    // 保存主表table选中结果
+    onSelectChange(val) {
+      this.tabelChecked = val
+      console.log(this.tabelChecked)
+    },
+    // 点击详情
+    confirmClick(row) {
+      this.table.loading = true
       this.temp = Object.assign({}, row)
+      const data = {
+        id: row.id
+      }
+      GetBusInfoForEdit(data).then(res => {
+        if (res.success) {
+          this.table.loading = false
+          this.busNO = res.result.busNO,
+          this.creationTime = res.result.creationTime,
+          this.businessCode = res.result.businessCode,
+          this.portCode = res.result.portCode,
+          this.inspectTime = res.result.inspectTime,
+          this.originCountry = res.result.originCountry,
+          this.packNO = res.result.packNO,
+          this.exportCountry = res.result.exportCountry,
+          this.startPort = res.result.startPort,
+          this.importCountry = res.result.importCountry,
+          this.destination = res.result.destination,
+          this.expectedTime = res.result.expectedTime,
+          this.modeTransport = res.result.modeTransport,
+          this.carrierCode = res.result.carrierCode,
+          this.blawbno = res.result.blawbno,
+          this.boxMode = res.result.boxMode,
+          this.containerNO = res.result.containerNO,
+          this.sealNO = res.result.sealNO,
+          this.productStatus = res.result.productStatus,
+          this.exporterCusCode = res.result.exporterCusCode,
+          this.importerCusCode = res.result.importerCusCode,
+          this.finalInvoiceNO = res.result.finalInvoiceNO,
+          this.invoiceTime = res.result.invoiceTime,
+          this.fobPrice = res.result.fobPrice,
+          this.fobCurrency = res.result.fobCurrency,
+          this.formMNO = res.result.formMNO,
+          this.tinno = res.result.tinno,
+          this.bano = res.result.bano,
+          this.pcRoute = res.result.pcRoute,
+          this.rcbnNo = res.result.rcbnNo,
+          this.cnasCode = res.result.cnasCode,
+          this.letterNO = res.result.letterNO,
+          this.pvocno = res.result.pvocno,
+          this.productCategory = res.result.productCategory
+        }
+      })
+      const pro = {
+        BusNO: row.busNO
+      }
+      GetContinuedList(pro).then(res => {
+        if (res.success) {
+          this.continuedList = res.result.items
+        }
+      })
       this.dialogDetailsVisible = true
     },
-    /**
-     * 点击了分配
-     */
+    //
+    // 获取树数据
+    getAndUsersComboBox() {
+      this.table.loading = true
+      getOrganizationUnitsAndUsersComboBox().then(res => {
+        if (res.success) {
+          this.table.loading = false
+          this.userOptions = res.result
+        }
+      }
+      )
+    },
+    userOptionsChange(value) {
+      console.log(value)
+    },
+    // 单击分配
     handleDetails(row) {
-      this.temp = Object.assign({}, row)
+      this.assingId = row.id
+      const data = {
+        busNO: row.busNO
+      }
+      getItemsCertificate(data).then(res => {
+        if (res.success) {
+          this.organizationUnitId = res.result.treeClick,
+          this.visualquality = res.result.visualquality, // 检验项目
+          this.quantitweight = res.result.quantitweight,
+          this.takephoto = res.result.takephoto,
+          this.fumigation = res.result.fumigation,
+          this.shippingmark = res.result.shippingmark,
+          this.electricrating = res.result.electricrating,
+          this.countryoforigin = res.result.countryoforigin,
+          this.model = res.result.model,
+          this.speccificationdimension = res.result.speccificationdimension,
+          this.samplingandsealing = res.result.samplingandsealing,
+          this.supervisecontainerloadingandsealing = res.result.supervisecontainerloadingandsealing,
+          this.witnesstesting = res.result.witnesstesting,
+          this.factoryinspection = res.result.factoryinspection,
+          this.serialno = res.result.serialno,
+          this.manufacturerandorbrand = res.result.manufacturerandorbrand,
+          this.packing = res.result.packing,
+          this.labelingandmarking = res.result.labelingandmarking,
+          this.mfgdateexpdateexpdate = res.result.mfgdateexpdateexpdate,
+          this.testing = res.result.testing,
+          this.license = res.result.license, // 检验依据
+          this.proformaInvoice = res.result.proformaInvoice,
+          this.psop = res.result.psop,
+          this.packingList = res.result.packingList,
+          this.idfformm = res.result.idfformm,
+          this.testingReport = res.result.testingReport,
+          this.contract = res.result.contract,
+          this.lc = res.result.lc,
+          this.standard = res.result.standard,
+          this.registered = res.result.registered
+        }
+      })
       this.dialogPublishVisible = true
     },
-    /**
-     * 点击了驳回
-     */
+    // 点击批量分配
+    batchHandleDetails() {
+      this.isShow = false
+      if (this.tabelChecked.length === 0) {
+        this.$message.error('请至少选择一条数据')
+      } else {
+        for (let i = 0; i < this.tabelChecked.length; i++) {
+          this.ids.push(this.tabelChecked[i].id)
+        }
+        console.log(this.ids)
+        this.dialogPublishVisible = true
+      }
+    },
+    // 确定分配
+    distributionClick() {
+      if (this.assingId === '') {
+        const data = {
+          ids: this.ids,
+          // userId: [this.userOptionsValue]
+          userId: [102]
+        }
+        getAssignments(data).then(res => {
+          if (res.success) {
+            this.dialogPublishVisible = false
+            this.$message.success('任务分配成功')
+            this.getTableList()
+          }
+        })
+      } else {
+        const data = {
+          ids: [this.assingId],
+          userId: [102]
+        }
+        getAssignments(data).then(res => {
+          if (res.success) {
+            this.dialogPublishVisible = false
+            this.$message.success('任务分配成功')
+            this.getTableList()
+          }
+        })
+      }
+    },
+    // 单击驳回
     handleReject(row) {
-      this.temp = Object.assign({}, row)
+      this.assingId = row.id
       this.dialogRejectVisible = true
     },
-    /**
-     * 点击了第几页
-     */
-    handleCurrentChange: function(currentPage) {
-      this.currentPage = currentPage
-      // /*console.log(this.currentPage) */
+    // 确认驳回
+    confirmHandleReject() {
+      const data = {
+        id: this.assingId,
+        type: false,
+        fulfil: false,
+        checkSuggest: this.checkSuggest
+      }
+      getUpdateCheck(data).then(res => {
+        if (res.success) {
+          this.dialogRejectVisible = false
+          this.$message.error('驳回成功')
+          this.getTableList()
+        }
+      })
+    },
+    // 审核记录
+    examineRecordClick() {
+      this.dialogRecordsVisible = true
     }
   }
 }
@@ -717,4 +779,5 @@ export default {
     margin-bottom: 0;
   }
   .wrapper-title{color: #1890ff}
+  .jbxx p span{color: #1890ff}
 </style>

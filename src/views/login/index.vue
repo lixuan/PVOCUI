@@ -1,90 +1,58 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
       <div style="background: #fff;padding: 20px;">
         <div class="title-container" align="center">
           <img :src="bannerImg" width="60" height="60" style="margin-bottom: 10px">
           <h3 class="title" style="color: #1890ff">
             {{ $t('login.title') }}
           </h3>
-          <lang-select class="set-language" />
         </div>
-
-        <el-form-item prop="username">
-          <span class="svg-container">
-            <svg-icon icon-class="user" />
-          </span>
+        <el-form-item prop="userNameOrEmailAddress">
           <el-input
-            ref="username"
-            v-model="loginForm.username"
+            v-model="loginForm.userNameOrEmailAddress"
             :placeholder="$t('login.username')"
-            name="username"
             type="text"
-            tabindex="1"
             autocomplete="on"
           />
         </el-form-item>
-
-        <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-          <el-form-item prop="password">
-            <span class="svg-container">
-              <svg-icon icon-class="password" />
-            </span>
-            <el-input
-              :key="passwordType"
-              ref="password"
-              v-model="loginForm.password"
-              :type="passwordType"
-              :placeholder="$t('login.password')"
-              name="password"
-              tabindex="2"
-              autocomplete="on"
-              @keyup.native="checkCapslock"
-              @blur="capsTooltip = false"
-              @keyup.enter.native="handleLogin"
-            />
-            <span class="show-pwd" @click="showPwd">
-              <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-            </span>
-          </el-form-item>
-        </el-tooltip>
-
+        <el-form-item prop="password">
+          <el-input
+            id="password"
+            ref="password"
+            v-model="loginForm.password"
+            type="password"
+            :placeholder="$t('login.password')"
+            autocomplete="on"
+            @keyup.enter.native="handleLogin"
+          />
+        </el-form-item>
+        <div style="margin-top:10px;margin-bottom: 10px">
+          <el-checkbox v-model="loginForm.rememberClient" label="记住密码" name="type" class="checkboxpass" />
+        </div>
         <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">
           {{ $t('login.logIn') }}
         </el-button>
       </div>
     </el-form>
-
-    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
-      {{ $t('login.thirdpartyTips') }}
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-import LangSelect from '@/components/LangSelect'
-import SocialSign from './components/SocialSignin'
+import { setCookie, getCookie, delCookie } from '@/utils/cookie'
+import { getUserInfoById } from '../../api/user/user/index'
+import store from '@/store'
+import { warnMsg } from '@/utils/messageBox'
+import router from '@/router'
+import { getInfo } from '@/api/login'
 
 export default {
   name: 'Login',
-  components: { LangSelect, SocialSign },
+  components: {},
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+    const validatePass = (rule, value, callback) => {
+      if (value.length < 4) {
+        callback(new Error('密码不能小于5位'))
       } else {
         callback()
       }
@@ -92,144 +60,124 @@ export default {
     return {
       bannerImg: require('../../../src/assets/login/logo.png'),
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        userNameOrEmailAddress: '',
+        password: '',
+        rememberClient: false
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        userNameOrEmailAddress: [{
+          required: true,
+          message: '用户名不能为空',
+          trigger: 'blur'
+        }, {
+          min: 3,
+          max: 50,
+          message: '长度在 3 到 50 个字符',
+          trigger: 'blur'
+        }],
+        password: [{
+          required: true,
+          trigger: 'blur',
+          validator: validatePass
+        }]
       },
-      passwordType: 'password',
-      capsTooltip: false,
       loading: false,
       showDialog: false,
-      redirect: undefined,
-      otherQuery: {}
+      // 租户选择
+      tenants: [],
+      tenantForm: {},
+      arrTemp: [],
+      arrTemps: ''
     }
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        const query = route.query
-        if (query) {
-          this.redirect = query.redirect
-          this.otherQuery = this.getOtherQuery(query)
-        }
-      },
-      immediate: true
-    }
+  watch: {},
+  mounted() {},
+  destroyed() {
+  // window.removeEventListener('storage', this.afterQRScan)
   },
   created() {
-    // window.addEventListener('storage', this.afterQRScan)
-  },
-  mounted() {
-    if (this.loginForm.username === '') {
-      this.$refs.username.focus()
-    } else if (this.loginForm.password === '') {
-      this.$refs.password.focus()
-    }
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
+    localStorage.clear()
+    // this.getTenants();
+    if (getCookie('userName')) { this.loginForm.userNameOrEmailAddress = getCookie('userName') }
+
+    if (getCookie('passWord')) { this.loginForm.password = getCookie('passWord') }
   },
   methods: {
-    checkCapslock(e) {
-      const { key } = e
-      this.capsTooltip = key && key.length === 1 && (key >= 'A' && key <= 'Z')
-    },
-    showPwd() {
-      if (this.passwordType === 'password') {
-        this.passwordType = ''
-      } else {
-        this.passwordType = 'password'
-      }
-      this.$nextTick(() => {
-        this.$refs.password.focus()
-      })
-    },
     handleLogin() {
+      this.loading = true
+      const that = this
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+          localStorage.clear()
+
+          // 判断复选框是否被勾选
+          if (this.loginForm.rememberClient === true) {
+          // 存入账号名，密码和保存天数三个参数
+            setCookie('userName', this.loginForm.userNameOrEmailAddress, 360)
+            setCookie('passWord', this.loginForm.password, 360)
+          } else {
+          // 清空Cookie
+            delCookie('passWord')
+          }
+
+          this.$store.dispatch('LoginByEmail', this.loginForm).then(res => {
+            if (res.success) {
               this.loading = false
-            })
-            .catch(() => {
+              setCookie('Abp.AuthToken', res.result.accessToken, 360)
+              setCookie('Abp.AuthUserId', res.result.userId, 360)
+              getUserInfoById({ id: res.result.userId }).then(res => {
+                if (res.success) {
+                  this.arrTemp = res.result.roles
+                  for (let i = 0; i < this.arrTemp.length; i++) {
+                    this.arrTemps = this.arrTemp[i]
+                  }
+                  setCookie('Abp.AuthUserItem', this.arrTemps, 360)
+                }
+              })
+              that.$router.push({ path: 'home' })
+            } else {
               this.loading = false
-            })
+              this.$message({
+                showClose: true,
+                message: res.msg,
+                type: 'error'
+              })
+            }
+          // this.showDialog = true;
+          }).catch(err => {
+            this.loading = false
+          })
         } else {
-          console.log('error submit!!')
+          this.loading = false
           return false
         }
       })
-    },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
-        }
-        return acc
-      }, {})
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
+
   }
 }
 </script>
 
 <style lang="scss">
-/* 修复input 背景不协调 和光标变色 */
-/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg:#283443;
 $light_gray:#fff;
 $cursor: #fff;
-
-@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
-  .login-container .el-input input {
-    color: $cursor;
-  }
-}
 
 /* reset element-ui css */
 .login-container {
   .el-input {
     display: inline-block;
     height: 47px;
-    width: 85%;
 
     input {
       background: transparent;
       border: 0px;
       -webkit-appearance: none;
-      border-radius: 0px;
       padding: 12px 5px 12px 15px;
       color: #1890ff;
       height: 47px;
-      caret-color: $cursor;
-
-      &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
-        -webkit-text-fill-color: $cursor !important;
-      }
+      border-radius: 5px;
     }
   }
 

@@ -5,26 +5,21 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 import adminDashboard from './admin'
-import editorDashboard from './editor'
+import { getCookie } from '@/utils/cookie'
 
 export default {
   name: 'Dashboard',
-  components: { adminDashboard, editorDashboard },
+  components: { adminDashboard },
   data() {
     return {
       currentRole: 'adminDashboard'
     }
   },
-  computed: {
-    ...mapGetters([
-      'roles'
-    ])
-  },
+  computed: {},
   created() {
-    if (!this.roles.includes('admin')) {
-      this.currentRole = 'editorDashboard'
+    if (getCookie('Abp.AuthToken')) {
+      this.currentRole = 'adminDashboard'
     }
   }
 }

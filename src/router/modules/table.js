@@ -15,42 +15,42 @@ const tableRouter = {
     // 用户
     {
       path: 'user-management',
-      component: () => import('@/views/dataSettings/index'),
+      component: () => import('@/views/dataSettings/user/index'),
       name: 'UserManagement',
       meta: { title: 'UserManagement' }
     },
     // 角色
     {
       path: 'role-management',
-      component: () => import('@/views/dataSettings/drag-table'),
+      component: () => import('@/views/dataSettings/role/drag-table'),
       name: 'RoleManagement',
       meta: { title: 'RoleManagement' }
     },
     // 字典
     {
       path: 'dictionaries',
-      component: () => import('@/views/dataSettings/inline-edit-table'),
+      component: () => import('@/views/dataSettings/dictionaryManage/inline-edit-table'),
       name: 'Dictionaries',
       meta: { title: 'Dictionaries' }
     },
     // 部门维护
     {
       path: 'department-safeguard',
-      component: () => import('@/views/dataSettings/department-safeguard'),
+      component: () => import('@/views/dataSettings/organization/department-safeguard'),
       name: 'DepartmentSafeguard',
       meta: { title: 'DepartmentSafeguard' }
     },
     // 国家维护
     {
       path: 'country-safeguard',
-      component: () => import('@/views/dataSettings/country-safeguard'),
+      component: () => import('@/views/dataSettings/countryInfo/country-safeguard'),
       name: 'CountrySafeguard',
       meta: { title: 'CountrySafeguard' }
     },
     // 港口维护
     {
       path: 'port-safeguard',
-      component: () => import('@/views/dataSettings/port-safeguard'),
+      component: () => import('@/views/dataSettings/portInfo/port-safeguard'),
       name: 'PortSafeguard',
       meta: { title: 'PortSafeguard' }
     },
@@ -71,7 +71,7 @@ const tableRouter = {
     // 客户信息
     {
       path: 'customer-info',
-      component: () => import('@/views/dataSettings/to-review'),
+      component: () => import('@/views/dataSettings/customerInfo/to-review'),
       name: 'CustomerInfo',
       meta: { title: 'CustomerInfo' }
     }

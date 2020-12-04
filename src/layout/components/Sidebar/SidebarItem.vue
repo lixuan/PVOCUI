@@ -1,43 +1,56 @@
 <template>
-  <div v-if="!item.hidden">
-    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren)&&!item.alwaysShow">
-      <app-link v-if="onlyOneChild.meta" :to="resolvePath(onlyOneChild.path)">
+  <div v-if="!item.hidden && compute(item)" class="menu-wrapper">
+
+    <template v-if="hasOneShowingChild(item.children,item) && (!onlyOneChild.children||onlyOneChild.noShowingChildren) && !item.alwaysShow">
+      <router-link :to="resolvePath(onlyOneChild.path)">
         <el-menu-item :index="resolvePath(onlyOneChild.path)" :class="{'submenu-title-noDropdown':!isNest}">
-          <item :icon="onlyOneChild.meta.icon||(item.meta&&item.meta.icon)" :title="generateTitle(onlyOneChild.meta.title)" />
+          <item :icon-name="onlyOneChild.meta.icon||item.meta.icon" :title="onlyOneChild.meta.title" />
+          <!-- <span>{{onlyOneChild.meta.title}}</span> -->
         </el-menu-item>
-      </app-link>
+      </router-link>
     </template>
 
-    <el-submenu v-else ref="subMenu" :index="resolvePath(item.path)" popper-append-to-body>
+    <el-submenu v-else ref="submenu" :class="{'secondMenu':layer===2}" :index="resolvePath(item.path)" popper-append-to-body>
       <template slot="title">
-        <item v-if="item.meta" :icon="item.meta && item.meta.icon" :title="generateTitle(item.meta.title)" />
+        <item v-if="item.meta" :icon-name="item.meta.icon" :title="item.meta.title" />
+        <!-- <span>{{item.meta.title}}</span> -->
       </template>
+
+      <!-- <template v-for="child in comChild" > -->
       <sidebar-item
         v-for="child in item.children"
         :key="child.path"
+        :layer="2"
         :is-nest="true"
         :item="child"
         :base-path="resolvePath(child.path)"
         class="nest-menu"
       />
+
+      <!-- <router-link v-else :to="resolvePath(child.path)" :key="child.name">
+        <el-menu-item :index="resolvePath(child.path)">
+          <item v-if="child.meta" :icon="child.meta.icon" :title="child.meta.title" />
+
+        </el-menu-item>
+      </router-link> -->
+      <!-- </template> -->
     </el-submenu>
+
   </div>
 </template>
 
 <script>
 import path from 'path'
-import { generateTitle } from '@/utils/i18n'
-import { isExternal } from '@/utils/validate'
 import Item from './Item'
-import AppLink from './Link'
-import FixiOSBug from './FixiOSBug'
 
 export default {
   name: 'SidebarItem',
-  components: { Item, AppLink },
-  mixins: [FixiOSBug],
+  components: { Item },
   props: {
-    // route object
+    layer: {
+      type: Number,
+      default: 1
+    },
     item: {
       type: Object,
       required: true
@@ -52,13 +65,32 @@ export default {
     }
   },
   data() {
-    // To fix https://github.com/PanJiaChen/vue-admin-template/issues/237
-    // TODO: refactor with render function
-    this.onlyOneChild = null
-    return {}
+    return {
+      onlyOneChild: null
+    }
+  },
+  computed: {
+    comChild: function() {
+      return this.item.children.filter(function(child) {
+        return !child.hidden
+      })
+    }
   },
   methods: {
+    compute(menuItem) {
+      if (!menuItem.children) { return true }
+
+      const length = menuItem.children.filter(item => {
+        if (item.children && item.children.length == 0) { return true } else { return false }
+      }).length
+
+      if (length === menuItem.children.length) { return false }
+
+      return true
+    },
     hasOneShowingChild(children = [], parent) {
+      // if(!children)
+      //   return false
       const showingChildren = children.filter(item => {
         if (item.hidden) {
           return false
@@ -69,12 +101,12 @@ export default {
         }
       })
 
-      // When there is only one child router, the child router is displayed by default
+      // 当只有一个子路由器时，默认情况下显示子路由器
       if (showingChildren.length === 1) {
         return true
       }
 
-      // Show parent if there are no child router to display
+      // 如果没有要显示的子路由器，则显示父路由器
       if (showingChildren.length === 0) {
         this.onlyOneChild = { ... parent, path: '', noShowingChildren: true }
         return true
@@ -82,17 +114,22 @@ export default {
 
       return false
     },
+    isExternal(path) {
+      return /^(https?:|mailto:|tel:)/.test(path)
+    },
+    // 合并父子路由path
     resolvePath(routePath) {
-      if (isExternal(routePath)) {
+      if (this.isExternal(routePath)) {
         return routePath
       }
-      if (isExternal(this.basePath)) {
+      if (this.isExternal(this.basePath)) {
         return this.basePath
       }
       return path.resolve(this.basePath, routePath)
     },
-
-    generateTitle
+    isExternalLink(routePath) {
+      return this.isExternal(routePath)
+    }
   }
 }
 </script>

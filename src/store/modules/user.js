@@ -1,136 +1,230 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
-import router, { resetRouter } from '@/router'
+// import {Decrypt,Encrypt} from '@/utils/crypto'
+import { loginByEmail, logout, getInfo } from '@/api/login'
+import { setCookie, getCookie, delCookie, clearAllCookie } from '@/utils/cookie'
+const user = {
+  state: {
+    user: '',
+    status: '',
+    id: '',
+    code: '',
+    userId: getCookie('Abp.AuthUserId'),
+    userItem: '33',
+    token: getCookie('Abp.AuthToken'),
+    tenantId: getCookie('Abp.TenantId'), // 租户
+    permission: JSON.parse(localStorage.getItem('permission')), // 权限码
+    name: '',
+    deptId: '',
+    deptName: '',
+    avatar: '',
+    introduction: '',
+    roles: [],
+    menus: undefined,
+    eleemnts: undefined,
+    permissionMenus: undefined,
+    setting: {
+      articlePlatform: []
+    }
+  },
 
-const state = {
-  token: getToken(),
-  name: '',
-  avatar: '',
-  introduction: '',
-  roles: []
-}
+  mutations: {
+    SET_CODE: (state, code) => {
+      state.code = code
+    },
+    SET_TOKEN: (state, token) => {
+      state.token = token
+    },
+    SET_ID: (state, id) => {
+      state.id = id
+    },
+    SET_USERID: (state, userId) => {
+      state.userId = userId
+    },
+    SET_USERITEM: (state, userItem) => {
+      state.userItem = userItem
+    },
+    SET_INTRODUCTION: (state, introduction) => {
+      state.introduction = introduction
+    },
+    SET_SETTING: (state, setting) => {
+      state.setting = setting
+    },
+    SET_STATUS: (state, status) => {
+      state.status = status
+    },
+    SET_NAME: (state, name) => {
+      state.name = name
+    },
+    SET_DEPTID: (state, deptId) => {
+      state.deptId = deptId
+    },
+    SET_DEPTNANE: (state, deptName) => {
+      state.deptName = deptName
+    },
+    SET_AVATAR: (state, avatar) => {
+      state.avatar = avatar
+    },
+    SET_ROLES: (state, roles) => {
+      state.roles = roles
+    },
+    SET_MENUS: (state, menus) => {
+      state.menus = menus
+    },
+    SET_ELEMENTS: (state, elements) => {
+      state.elements = elements
+    },
+    LOGIN_SUCCESS: () => {
+      console.log('login success')
+    },
+    LOGOUT_USER: state => {
+      state.user = ''
+    },
+    SET_PERMISSION_MENUS: (state, permissionMenus) => {
+      state.permissionMenus = permissionMenus
+    },
+    SET_PERMISSION: (state, permission) => {
+      state.permission = permission
+    },
+    SET_TENANTID: (state, tenantId) => {
+      state.tenantId = tenantId
+    }
+  },
 
-const mutations = {
-  SET_TOKEN: (state, token) => {
-    state.token = token
-  },
-  SET_INTRODUCTION: (state, introduction) => {
-    state.introduction = introduction
-  },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
-  },
-  SET_ROLES: (state, roles) => {
-    state.roles = roles
-  }
-}
+  actions: {
+    // 邮箱登录
+    LoginByEmail({
+      commit
+    }, userInfo) {
+      userInfo.userName = userInfo.userNameOrEmailAddress.trim()
+      userInfo.password = userInfo.password.trim()
 
-const actions = {
-  // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
+      return new Promise((resolve, reject) => {
+        loginByEmail(userInfo).then(res => {
+          if (res.success) {
+            commit('SET_TOKEN', '')
+            commit('SET_ROLES', [])
+            commit('SET_MENUS', undefined)
+            commit('SET_ELEMENTS', undefined)
+            // removeToken();
+
+            setCookie('Abp.AuthToken', res.result.accessToken)
+            setCookie('Abp.AuthUserId', res.result.userId)
+            // setToken(res.result.accessToken);
+
+            commit('SET_TOKEN', res.result.accessToken)
+            commit('SET_USERID', res.result.userId)
+          }
+          resolve(res)
+        }).catch(error => {
+          reject(error)
+        })
       })
-    })
-  },
+    },
 
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { roles, name, avatar, introduction } = data
-
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
-        }
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
+    // 获取用户信息
+    GetInfo({
+      commit,
+      state
+    }) {
+      return new Promise((resolve, reject) => {
+        getInfo(state.userItem).then(response => {
+          const data = response
+          localStorage.setItem('permission', JSON.stringify(Object.values(data.result.grantedPermissionNames)))
+          commit('SET_PERMISSION', Object.values(data.result.grantedPermissionNames))
+          commit('SET_ID', data.id)
+          commit('SET_USERID', data.userId)
+          commit('SET_USERITEM', data.userItem)
+          commit('SET_ROLES', 'admin')
+          commit('SET_NAME', data.name)
+          commit('SET_DEPTID', data.deptId)
+          commit('SET_DEPTNANE', data.deptName)
+          // commit('SET_TENANTID',data.result.session.tenantId)
+          commit('SET_AVATAR', 'https://www.gravatar.com/avatar/2714bbb24bb92e796927dd705d769fdb?s=180&d=identicon')
+          commit('SET_INTRODUCTION', data.description)
+          // commit('SET_MENUS', data.menus);
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
       })
-    })
-  },
+    },
 
-  // user logout
-  logout({ commit, state, dispatch }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+    // 第三方验证登录
+    LoginByThirdparty({
+      commit,
+      state
+    }, code) {
+      return new Promise((resolve, reject) => {
+        commit('SET_CODE', code)
+        loginByThirdparty(state.status, state.email, state.code).then(response => {
+          // commit('SET_TOKEN', response.data.token);
+          // setToken(response.data.token);
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    // // 登出
+    LogOut({
+      commit,
+      state
+    }) {
+      return new Promise((resolve, reject) => {
+        logout(state.token).then(() => {
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          commit('SET_MENUS', undefined)
+          commit('SET_ELEMENTS', undefined)
+          commit('SET_PERMISSION_MENUS', undefined)
+          removeToken()
+          // 删除租户cookie
+          delCookie('tenantId')
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    // 前端 登出
+    FedLogOut({
+      commit
+    }) {
+      return new Promise(resolve => {
+        // 删除租户cookie
+        // delCookie('tenantId')
+        // 清除localStorage
+        localStorage.clear()
+        // 清除用户cookie
+        // removeToken();
+
+        delCookie('Abp.AuthToken')
+        delCookie('Abp.TenantId')
+        // console.log('bbb',getCookie('Abp.AuthToken'))
+        // clearAllCookie()
+
         commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        removeToken()
-        resetRouter()
-
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-        dispatch('tagsView/delAllViews', null, { root: true })
+        commit('SET_MENUS', undefined)
+        commit('SET_ELEMENTS', undefined)
+        commit('SET_PERMISSION_MENUS', undefined)
 
         resolve()
-      }).catch(error => {
-        reject(error)
       })
-    })
-  },
+    },
 
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
-      commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
-      removeToken()
-      resolve()
-    })
-  },
-
-  // dynamically modify permissions
-  changeRoles({ commit, dispatch }, role) {
-    return new Promise(async resolve => {
-      const token = role + '-token'
-
-      commit('SET_TOKEN', token)
-      setToken(token)
-
-      const { roles } = await dispatch('getInfo')
-
-      resetRouter()
-
-      // generate accessible routes map based on roles
-      const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-
-      // dynamically add accessible routes
-      router.addRoutes(accessRoutes)
-
-      // reset visited views and cached views
-      dispatch('tagsView/delAllViews', null, { root: true })
-
-      resolve()
-    })
+    // 动态修改权限
+    ChangeRole({
+      commit
+    }, role) {
+      return new Promise(resolve => {
+        commit('SET_ROLES', [role])
+        commit('SET_TOKEN', role)
+        // setToken(role);
+        resolve()
+      })
+    }
   }
 }
 
-export default {
-  namespaced: true,
-  state,
-  mutations,
-  actions
-}
+export default user

@@ -2,7 +2,7 @@
   <div class="page-container">
     <el-row :gutter="8">
       <el-col :xs="24" :sm="24" :lg="6">
-        <div class="background-fff">
+        <div class="background-fff" style="margin-bottom: 20px;">
           <div class="wrapper-title">基本信息</div>
           <div style="padding: 20px 0 20px 20px">
             <el-form ref="ruleForm" :model="ruleForm" label-width="120px" class="demo-ruleForm">
@@ -56,7 +56,7 @@
         </div>
       </el-col>
       <el-col :xs="24" :sm="24" :lg="18">
-        <div class="background-fff">
+        <div class="background-fff" style="margin-bottom: 20px;">
           <div class="wrapper-title">COC/NCR证书</div>
           <div style="padding: 20px 0 20px 20px">
             <el-form ref="ruleFormCoc" :model="ruleFormCoc" label-width="160px" class="demo-ruleForm">
@@ -351,7 +351,7 @@ export default {
 
 <style lang="scss" scoped>
   .page-container{background: rgb(240, 242, 245);padding: 20px;min-height: 100vh;}
-  .background-fff{background: #fff;padding: 16px 16px 0;margin-bottom: 20px;}
+  .background-fff{background: #fff;padding: 16px 16px 0;}
   .wrapper-title{color: #1890ff}
   .pad-15{padding-bottom: 15px}
 </style>
